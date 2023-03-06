@@ -5,8 +5,7 @@ import { makeCreateUserController } from '../factories/create-user-controller';
 
 const router = Router();
 
-router
-  .post('/api/users', adaptRoute(makeCreateUserController()));
+router.post('/api/users', adaptRoute(makeCreateUserController()));
 
 console.log('→ Loaded routes');
 
