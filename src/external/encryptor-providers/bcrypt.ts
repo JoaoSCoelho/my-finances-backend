@@ -1,6 +1,5 @@
 import { compareSync, hashSync } from 'bcrypt';
 
-import config from '../../../config.json';
 import {
   CompareMethod,
   EncryptMethod,
@@ -8,7 +7,7 @@ import {
 } from '../ports/encryptor-provider';
 
 export class Bcrypt implements EncryptorProvider {
-  encrypt: EncryptMethod = (data, salts = config.encryptor_salts) => {
+  encrypt: EncryptMethod = (data, salts) => {
     return hashSync(data, salts);
   };
 

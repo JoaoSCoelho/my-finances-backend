@@ -1,3 +1,4 @@
+import config from '../../config.json';
 import { User } from '../entities/user';
 import { ThereIsAlreadyEntityWithThisPropError } from '../errors/there-is-already-entity-with-this-prop-error';
 import { EncryptorProvider } from '../external/ports/encryptor-provider';
@@ -23,7 +24,10 @@ export class CreateUserUC {
     if (eitherPassword.isLeft()) return left(eitherPassword.value);
 
     const { value: password } = eitherPassword.value;
-    const hashPassword = this.encryptor.encrypt(password);
+    const hashPassword = this.encryptor.encrypt(
+      password,
+      config.default_encryptor_salts,
+    );
 
     const eitherEmail = Email.create(data.email);
 

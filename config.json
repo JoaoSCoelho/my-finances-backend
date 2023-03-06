@@ -1,3 +1,3 @@
 {
-  "encryptor_salts": 10
+  "default_encryptor_salts": 10
 }
