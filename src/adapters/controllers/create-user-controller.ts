@@ -2,12 +2,12 @@ import { InvalidParamError } from '../../errors/invalid-param-error';
 import { AnyObject } from '../../object-values/any-object';
 import { CreateUserUC } from '../../use-cases/create-user';
 import { badRequest, created } from '../helpers/http-helper';
-import { Controller, ControllerHandleMethod } from '../ports/controller';
+import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
-export class CreateUserController implements Controller {
+export class CreateUserController implements Adapter {
   constructor(private createUser: CreateUserUC) {}
 
-  handle: ControllerHandleMethod = async (httpRequest) => {
+  handle: AdapterHandleMethod = async (httpRequest) => {
     // Validates the request body as an object
 
     const eitherBody = AnyObject.create(httpRequest.body);

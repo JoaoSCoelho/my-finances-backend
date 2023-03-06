@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 
 import { ServerError } from '../errors/server-error';
-import { Controller } from './ports/controller';
+import { Adapter } from './ports/adapter';
 import { IHttpRequest } from './ports/http';
-import { Middleware } from './ports/middleware';
 
-export function adaptRoute(adapter: Controller | Middleware) {
+export function adaptRoute(adapter: Adapter) {
   return async (
     req: Request & IHttpRequest,
     res: Response,
@@ -16,13 +15,13 @@ export function adaptRoute(adapter: Controller | Middleware) {
       query: req.query,
       params: req.params,
       headers: req.headers,
-      middlewareData: req.middlewareData,
+      nextData: req.nextData,
     };
 
     try {
       const adapterResponse = await adapter.handle(httpRequest);
 
-      // If the adapter is a controller
+      // If the adapter returns an API response
 
       if ('statusCode' in adapterResponse) {
         return res
@@ -31,12 +30,12 @@ export function adaptRoute(adapter: Controller | Middleware) {
           .send(adapterResponse.body);
       }
 
-      // If the adapter is a middleware
+      // If the adapter returns a handler continuation
 
-      if (adapterResponse.middlewareData) {
-        req.middlewareData = {
-          ...req.middlewareData,
-          ...adapterResponse.middlewareData,
+      if (adapterResponse.nextData) {
+        req.nextData = {
+          ...req.nextData,
+          ...adapterResponse.nextData,
         };
       }
 

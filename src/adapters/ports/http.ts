@@ -11,10 +11,10 @@ export interface IHttpRequest {
   body: Request['body'];
   params: Request['params'];
   headers: Request['headers'];
-  middlewareData?: Record<string, any>; // Data that is passed from middlewares to controllers
+  nextData?: Record<string, any>; // Data that is passed from middlewares to controllers
 }
 
 export interface INextResponse {
   err?: string;
-  middlewareData?: IHttpRequest['middlewareData'];
+  nextData?: IHttpRequest['nextData'];
 }
