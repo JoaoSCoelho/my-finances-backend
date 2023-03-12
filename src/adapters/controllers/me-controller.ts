@@ -19,13 +19,7 @@ export class MeController implements Adapter {
     const user = eitherUser.value;
 
     return ok({
-      user: {
-        username: user.username.value,
-        email: user.email.value,
-        id: user.id.value,
-        createdTimestamp: user.createdTimestamp.value,
-        confirmedEmail: user.confirmedEmail.value,
-      },
+      user: user.noHashPassValue,
     });
   };
 }

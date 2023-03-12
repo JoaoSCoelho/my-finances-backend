@@ -1,3 +1,5 @@
+import { User } from '../../../entities/user';
+import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   DeleteMethod,
@@ -36,22 +38,21 @@ export class MongoUsers implements UsersRepository {
   };
 
   updateProp: UpdatePropMethod = async (userID, key, value) => {
-    const user = await UserModel.findOneAndUpdate(
+    const dbUser = await UserModel.findOneAndUpdate(
       { id: userID },
       { [key]: value },
       { new: true },
     );
 
-    if (!user) return left(null);
+    if (!dbUser) return left(null);
 
-    return right({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      confirmedEmail: user.confirmedEmail,
-      hashPassword: user.hashPassword,
-      createdTimestamp: user.createdTimestamp,
-    });
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError('internal');
+
+    const user = eitherUser.value;
+
+    return right(user.value);
   };
 
   delete: DeleteMethod = async (userID) => {
@@ -61,45 +62,44 @@ export class MongoUsers implements UsersRepository {
   };
 
   filterEqual: FilterEqualMethod = async (key, value) => {
-    const users = await UserModel.find({ [key]: value });
+    const dbUsers = await UserModel.find({ [key]: value });
 
-    return users.map((user) => ({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      hashPassword: user.hashPassword,
-      confirmedEmail: user.confirmedEmail,
-      createdTimestamp: user.createdTimestamp,
-    }));
+    return dbUsers.map((dbUser) => {
+      const eitherUser = User.create(dbUser);
+
+      if (eitherUser.isLeft()) throw new ServerError('internal');
+
+      const user = eitherUser.value;
+
+      return user.value;
+    });
   };
 
   getById: GetByIdMethod = async (userID) => {
-    const user = await UserModel.findOne({ id: userID });
+    const dbUser = await UserModel.findOne({ id: userID });
 
-    if (!user) return left(null);
+    if (!dbUser) return left(null);
 
-    return right({
-      username: user.username,
-      email: user.email,
-      id: user.id,
-      hashPassword: user.hashPassword,
-      createdTimestamp: user.createdTimestamp,
-      confirmedEmail: user.confirmedEmail,
-    });
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError('internal');
+
+    const user = eitherUser.value;
+
+    return right(user.value);
   };
 
   getByEmail: GetByEmailMethod = async (email) => {
-    const user = await UserModel.findOne({ email });
+    const dbUser = await UserModel.findOne({ email });
 
-    if (!user) return left(null);
+    if (!dbUser) return left(null);
 
-    return right({
-      username: user.username,
-      email: user.email,
-      id: user.id,
-      hashPassword: user.hashPassword,
-      createdTimestamp: user.createdTimestamp,
-      confirmedEmail: user.confirmedEmail,
-    });
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError('internal');
+
+    const user = eitherUser.value;
+
+    return right(user.value);
   };
 }

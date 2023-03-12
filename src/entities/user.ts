@@ -31,6 +31,16 @@ export class User {
     };
   }
 
+  get noHashPassValue(): Omit<IUserObject, 'hashPassword'> {
+    return {
+      id: this.id.value,
+      username: this.username.value,
+      email: this.email.value,
+      confirmedEmail: this.confirmedEmail.value,
+      createdTimestamp: this.createdTimestamp.value,
+    };
+  }
+
   static create(
     user: Record<keyof IUserObject, any>,
   ): Either<InvalidParamError, User> {

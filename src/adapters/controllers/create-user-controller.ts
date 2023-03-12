@@ -43,13 +43,7 @@ export class CreateUserController implements Adapter {
     const authToken = this.createAuthToken.execute(user.id.value);
 
     return created({
-      user: {
-        id: user.value.id,
-        username: user.value.username,
-        email: user.value.email,
-        confirmedEmail: user.value.confirmedEmail,
-        createdTimestamp: user.value.createdTimestamp,
-      },
+      user: user.noHashPassValue,
       token: authToken,
     });
   };
