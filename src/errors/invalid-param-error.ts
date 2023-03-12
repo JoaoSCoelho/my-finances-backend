@@ -27,7 +27,7 @@ export class InvalidParamError extends Error {
     public readonly reason: InvalidParamReasons,
     public readonly expected: string,
   ) {
-    const message = `The ${paramName} "${param}" is invalid: ${reason}`;
+    const message = `The ${paramName} "${param}" is invalid: ${reason}. Expected: ${expected}`;
 
     super(message);
 
