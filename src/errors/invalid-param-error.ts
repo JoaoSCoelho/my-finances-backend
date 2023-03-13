@@ -14,7 +14,8 @@ export type InvalidParamReasons =
   | 'reserved'
   | 'very large'
   | 'already exists'
-  | 'equal to old prop';
+  | 'equal to old prop'
+  | 'is not a safe number';
 
 export class InvalidParamError extends Error {
   public readonly code = 100;
