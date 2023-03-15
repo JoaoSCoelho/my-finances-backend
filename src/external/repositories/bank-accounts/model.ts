@@ -6,6 +6,10 @@ export const bankAccountSchema = new Schema(
       type: String,
       required: true,
     },
+    userId: {
+      type: String,
+      required: true,
+    },
     name: {
       type: String,
       required: true,

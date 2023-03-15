@@ -31,7 +31,7 @@ export class BankAccount {
   }
 
   static create(
-    bankAccount: Record<keyof IBankAccountObject, any>,
+    bankAccount: Partial<Record<keyof IBankAccountObject, any>>,
   ): Either<InvalidParamError, BankAccount> {
     const eitherId = ID.create(bankAccount.id);
     const eitherUserId = ID.create(bankAccount.userId);

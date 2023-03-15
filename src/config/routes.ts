@@ -6,6 +6,7 @@ import { makeCreateBankAccountController } from '../factories/create-bank-accoun
 import { makeCreateUserController } from '../factories/create-user-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
+import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
 
 const router = Router();
 
@@ -21,6 +22,11 @@ router.post(
   '/api/bankaccounts',
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeCreateBankAccountController()),
+);
+router.get(
+  '/api/bankaccounts/my',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeMyBankAccountsController()),
 );
 
 console.log('→ Loaded routes');
