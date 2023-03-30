@@ -1,9 +1,12 @@
 import { BankAccount } from '../../../entities/bank-account';
 import { ServerError } from '../../../errors/server-error';
+import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
   FilterEqualMethod,
+  FilterWithThisPropsMethod,
   SetMethod,
+  UpdateMethod,
 } from '../../ports/bank-accounts-repository';
 import { BankAccountModel } from './model';
 
@@ -26,5 +29,37 @@ export class MongoBankAccounts implements BankAccountsRepository {
 
       return bankAccount.value;
     });
+  };
+
+  filterWithThisProps: FilterWithThisPropsMethod = async (filter) => {
+    const dbBankAccounts = await BankAccountModel.find(filter);
+
+    return dbBankAccounts.map((dbBankAccount) => {
+      const eitherBankAccount = BankAccount.create(dbBankAccount);
+
+      if (eitherBankAccount.isLeft()) throw new ServerError('internal');
+
+      const bankAccount = eitherBankAccount.value;
+
+      return bankAccount.value;
+    });
+  };
+
+  update: UpdateMethod = async (id, updateObject) => {
+    const dbBankAccount = await BankAccountModel.findOneAndUpdate(
+      { id },
+      updateObject,
+      { new: true },
+    );
+
+    if (!dbBankAccount) return left(null);
+
+    const eitherBankAccount = BankAccount.create(dbBankAccount);
+
+    if (eitherBankAccount.isLeft()) throw new ServerError();
+
+    const user = eitherBankAccount.value;
+
+    return right(user.value);
   };
 }
