@@ -4,6 +4,7 @@ import { adaptRoute } from '../adapters/route-adapter';
 import { makeAuthMiddleware } from '../factories/auth-middleware';
 import { makeCreateBankAccountController } from '../factories/create-bank-account-controller';
 import { makeCreateUserController } from '../factories/create-user-controller';
+import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
 import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
@@ -33,6 +34,11 @@ router.put(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeUpdateUserBankAccountController()),
+);
+router.delete(
+  '/api/bankaccounts/:id',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeDeleteUserBankAccountController()),
 );
 
 console.log('→ Loaded routes');

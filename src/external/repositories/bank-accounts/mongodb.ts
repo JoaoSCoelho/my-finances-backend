@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
+  DeleteMethod,
   FilterEqualMethod,
   FilterWithThisPropsMethod,
   SetMethod,
@@ -61,5 +62,11 @@ export class MongoBankAccounts implements BankAccountsRepository {
     const user = eitherBankAccount.value;
 
     return right(user.value);
+  };
+
+  delete: DeleteMethod = async (id) => {
+    await BankAccountModel.findOneAndDelete({ id: id });
+
+    return;
   };
 }

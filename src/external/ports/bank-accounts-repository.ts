@@ -24,10 +24,12 @@ export type UpdateMethod = <
   id: string,
   updateObject: Partial<Record<K, V>>,
 ) => Promise<Either<null, IBankAccountObject>>;
+export type DeleteMethod = (id: string) => Promise<void>;
 
 export type BankAccountsRepository = {
   set: SetMethod;
   filterEqual: FilterEqualMethod;
   filterWithThisProps: FilterWithThisPropsMethod;
   update: UpdateMethod;
+  delete: DeleteMethod;
 };
