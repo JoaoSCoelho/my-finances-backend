@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { adaptRoute } from '../adapters/route-adapter';
 import { makeAuthMiddleware } from '../factories/auth-middleware';
 import { makeCreateBankAccountController } from '../factories/create-bank-account-controller';
+import { makeCreateExpenseController } from '../factories/create-expense';
 import { makeCreateUserController } from '../factories/create-user-controller';
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeLoginController } from '../factories/login-controller';
@@ -39,6 +40,11 @@ router.delete(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeDeleteUserBankAccountController()),
+);
+router.post(
+  '/api/bankaccounts/:id/',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeCreateExpenseController()),
 );
 
 console.log('→ Loaded routes');

@@ -25,6 +25,9 @@ export type UpdateMethod = <
   updateObject: Partial<Record<K, V>>,
 ) => Promise<Either<null, IBankAccountObject>>;
 export type DeleteMethod = (id: string) => Promise<void>;
+export type ExistsWithThisIDMethod = (
+  bankAccountId: string,
+) => Promise<boolean>;
 
 export type BankAccountsRepository = {
   set: SetMethod;
@@ -32,4 +35,5 @@ export type BankAccountsRepository = {
   filterWithThisProps: FilterWithThisPropsMethod;
   update: UpdateMethod;
   delete: DeleteMethod;
+  existsWithThisID: ExistsWithThisIDMethod;
 };
