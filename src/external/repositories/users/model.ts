@@ -5,6 +5,8 @@ export const userSchema = new Schema(
     id: {
       type: String,
       required: true,
+      unique: true,
+      immutable: true,
     },
     username: {
       type: String,
@@ -13,6 +15,7 @@ export const userSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     confirmedEmail: {
       type: Boolean,
@@ -25,6 +28,7 @@ export const userSchema = new Schema(
     createdTimestamp: {
       type: Number,
       required: true,
+      immutable: true,
     },
   },
   {
