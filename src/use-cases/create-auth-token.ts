@@ -8,7 +8,7 @@ export class CreateAuthTokenUC {
 
   execute: ExecuteMethod = (userID) => {
     return this.tokenManager.generate(
-      { userID },
+      { userID, type: 'auth' },
       apiEnv.JWT_SECRET,
       60 * 60 * config.auth_token_expires_in,
     );
