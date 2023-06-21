@@ -1,8 +1,16 @@
-export interface IAuthTokenPayload {
+export type GenericPayload = {
+  type: 'auth' | 'confirm-email';
+  [key: string]: any;
+};
+export interface IAuthTokenPayload extends GenericPayload {
   userID: string;
+  type: 'auth';
 }
 
-export type GenericPayload = Record<string, any>;
+export interface IConfirmEmailPayload extends GenericPayload {
+  userID: string;
+  type: 'confirm-email';
+}
 
 export type GenerateMethod = (
   payload: GenericPayload,
