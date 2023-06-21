@@ -19,17 +19,19 @@ describe('Create user endpoint', () => {
       .post('/api/users')
       .send(requestData);
 
+    expect(status).toBe(201);
+
     expect(body).toEqual({
-      user: expect.objectContaining({
+      user: {
         username: requestData.username,
         email: requestData.email,
-      }),
+        confirmedEmail: false,
+        id: expect.any(String),
+        createdTimestamp: expect.any(Number),
+      },
+      token: expect.any(String),
     });
-    expect(status).toBe(201);
-    expect(typeof body.user.id).toBe('string');
-    expect(typeof body.user.hashPassword).toBe('string');
+
     expect(body.user.createdTimestamp).toBeLessThanOrEqual(Date.now());
-    expect(typeof body.user.createdTimestamp).toBe('number');
-    expect(body.user.confirmedEmail).toBe(false);
   });
 });
