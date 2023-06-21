@@ -47,6 +47,16 @@ export class AuthMiddleware implements Adapter {
         apiEnv.JWT_SECRET,
       ) as IAuthTokenPayload;
 
+      if (payload.type !== 'auth')
+        return unauthorized(
+          new InvalidParamError(
+            'authToken',
+            token,
+            'type not supported',
+            'auth',
+          ),
+        );
+
       return next({
         nextData: {
           auth: payload,
