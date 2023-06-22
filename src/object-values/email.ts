@@ -29,7 +29,7 @@ export class Email {
         new InvalidParamError(
           'email',
           email,
-          'greater than maximum characters',
+          'greater than the maximum characters',
           `Less or equal than ${this.maximumLength} characters`,
         ),
       );
