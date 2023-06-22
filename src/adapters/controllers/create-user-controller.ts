@@ -1,4 +1,5 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
+import { MissingParamError } from '../../errors/missing-param-error';
 import { AnyObject } from '../../object-values/any-object';
 import { CreateAuthTokenUC } from '../../use-cases/create-auth-token';
 import { CreateUserUC } from '../../use-cases/create-user';
@@ -29,6 +30,12 @@ export class CreateUserController implements Adapter {
     }
 
     const { value: body } = eitherBody.value;
+
+    if (!('email' in body)) return badRequest(new MissingParamError('email'));
+    if (!('username' in body))
+      return badRequest(new MissingParamError('username'));
+    if (!('password' in body))
+      return badRequest(new MissingParamError('password'));
 
     // Create an user in the database
 
