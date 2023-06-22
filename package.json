@@ -6,7 +6,7 @@
   "scripts": {
     "build": "sucrase ./src -d ./dist --transforms typescript,imports",
     "start": "node dist",
-    "test:functional": "jest --projects ./tests --runInBand --bail",
+    "test:functional": "jest --projects ./tests --runInBand --bail --coverage --coverageDirectory=\"coverage\"",
     "dev": "nodemon src/index.ts"
   },
   "keywords": [],
