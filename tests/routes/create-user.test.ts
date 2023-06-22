@@ -1,11 +1,12 @@
+import mongoose from 'mongoose';
 import supertest from 'supertest';
 
 import { app } from '../../src/config/app';
 import { UserModel } from '../../src/external/repositories/users/model';
 
 describe('Create user endpoint', () => {
-  beforeEach(async () => {
-    await UserModel.deleteMany();
+  afterAll(async () => {
+    await mongoose.connection.close();
   });
 
   test('should return a new user', async () => {
@@ -14,6 +15,8 @@ describe('Create user endpoint', () => {
       email: 'user_email2@domain.com.country',
       password: 'mysecure@password2023',
     };
+
+    await UserModel.deleteOne({ email: requestData.email });
 
     const { body, status } = await supertest(app)
       .post('/api/users')
