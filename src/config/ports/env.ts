@@ -4,5 +4,7 @@ export interface IApiEnv {
   JWT_SECRET: string;
   NODEMAILER_USER: string;
   NODEMAILER_PASS: string;
+  NODEMAILER_TEST_USER: string;
+  NODEMAILER_TEST_PASS: string;
   API_BASE_URL: string;
 }

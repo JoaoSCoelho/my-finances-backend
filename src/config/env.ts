@@ -10,6 +10,10 @@ if (!process.env.NODEMAILER_USER)
   throw console.error('Missing env NODEMAILER_USER');
 if (!process.env.NODEMAILER_PASS)
   throw console.error('Missing env NODEMAILER_PASS');
+if (!process.env.NODEMAILER_TEST_USER)
+  throw console.error('Missing env NODEMAILER_TEST_USER');
+if (!process.env.NODEMAILER_TEST_PASS)
+  throw console.error('Missing env NODEMAILER_TEST_PASS');
 if (!process.env.API_BASE_URL) throw console.error('Missing env API_BASE_URL');
 
 export const apiEnv: IApiEnv = {
@@ -18,5 +22,7 @@ export const apiEnv: IApiEnv = {
   JWT_SECRET: process.env.JWT_SECRET,
   NODEMAILER_USER: process.env.NODEMAILER_USER,
   NODEMAILER_PASS: process.env.NODEMAILER_PASS,
+  NODEMAILER_TEST_USER: process.env.NODEMAILER_TEST_USER,
+  NODEMAILER_TEST_PASS: process.env.NODEMAILER_TEST_PASS,
   API_BASE_URL: process.env.API_BASE_URL,
 };

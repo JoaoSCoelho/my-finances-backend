@@ -1,5 +1,11 @@
 {
   "default_encryptor_salts": 10,
   "auth_token_expires_in": 2,
-  "confirm_email_token_expires_in": 0.5
+  "confirm_email_token_expires_in": 0.5,
+  "nodemailer_host": "smtp.gmail.com",
+  "nodemailer_port": 465,
+  "nodemailer_secure": true,
+  "nodemailer_test_host": "smtp.ethereal.email",
+  "nodemailer_test_port": 587,
+  "nodemailer_test_secure": false
 }
