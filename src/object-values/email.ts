@@ -12,6 +12,8 @@ export class Email {
   static maximumLength = 128;
   static atSignStructure = () => /^[^@]+@[^@]+$/g;
   static emailUsernameCharacters = () => /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@/gi;
+  // eslint-disable-next-line no-useless-escape
+  static emailDomainCharacters = () => /@[a-z0-9-\.]+$/gi;
   static emailDomainStructure = () =>
     /@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/gi;
   static structure = () =>
@@ -51,13 +53,22 @@ export class Email {
           'The first part of an email must contain letters, numbers or some special characters',
         ),
       );
+    if (!this.emailDomainCharacters().test(email))
+      return left(
+        new InvalidParamError(
+          'email',
+          email,
+          'invalid characters',
+          'The domain of an email must contain only alphanumeric characters, hyphens and periods',
+        ),
+      );
     if (!this.emailDomainStructure().test(email))
       return left(
         new InvalidParamError(
           'email',
           email,
           'incorrect structure',
-          'The domain of an email must contain only alphanumeric characters, hyphens and at least one period to separate the domain name of the TLD, among other parts',
+          'The domain of an email must contain at least one period to separate the domain name of the TLD, among other parts',
         ),
       );
     if (!this.structure().test(email))
