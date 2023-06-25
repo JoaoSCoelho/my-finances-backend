@@ -56,7 +56,7 @@ export class User {
     const eitherHashPassword = AnyString.create(user.hashPassword);
     const eitherCreatedTimestamp = AnyNumber.create(user.createdTimestamp);
     const eitherConfirmedEmail = AnyBoolean.create(user.confirmedEmail);
-    const eitherRefreshTokens = AnyArray.create(user.refreshTokens);
+    const eitherRefreshTokensArray = AnyArray.create(user.refreshTokens);
 
     // Checks if there were any errors during the creation of object values
 
@@ -90,17 +90,17 @@ export class User {
           eitherConfirmedEmail.value.expected,
         ),
       );
-    if (eitherRefreshTokens.isLeft())
+    if (eitherRefreshTokensArray.isLeft())
       return left(
         new InvalidParamError(
           'refreshTokens',
           user.refreshTokens,
-          eitherRefreshTokens.value.reason,
-          eitherRefreshTokens.value.expected,
+          eitherRefreshTokensArray.value.reason,
+          eitherRefreshTokensArray.value.expected,
         ),
       );
 
-    const refreshTokens = eitherRefreshTokens.value;
+    const refreshTokensArray = eitherRefreshTokensArray.value;
     const id = eitherId.value;
     const username = eitherUsername.value;
     const email = eitherEmail.value;
@@ -108,11 +108,14 @@ export class User {
     const createdTimestamp = eitherCreatedTimestamp.value;
     const confirmedEmail = eitherConfirmedEmail.value;
 
-    const someInvalidRefreshToken = refreshTokens.value.reduce((_, curr) => {
-      const eitherRefreshToken = AnyString.create(curr);
+    const eithersRefreshTokens = refreshTokensArray.value.map((rt) =>
+      AnyString.create(rt),
+    );
 
-      if (eitherRefreshToken.isLeft()) return eitherRefreshToken.value;
-    }, undefined) as InvalidParamError | undefined;
+    const someInvalidRefreshToken = eithersRefreshTokens.find(
+      (eitherRT) => eitherRT.isLeft(),
+      undefined,
+    )?.value as InvalidParamError | undefined;
 
     if (someInvalidRefreshToken)
       return left(
@@ -123,6 +126,10 @@ export class User {
           someInvalidRefreshToken.expected,
         ),
       );
+
+    const refreshTokens = AnyArray.create(
+      eithersRefreshTokens.map((eitherRT) => eitherRT.value as AnyString),
+    ).value as AnyArray<AnyString>;
 
     // Returns a new User entity
 
