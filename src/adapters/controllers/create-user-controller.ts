@@ -1,17 +1,20 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
 import { MissingParamError } from '../../errors/missing-param-error';
+import { ServerError } from '../../errors/server-error';
 import { AnyObject } from '../../object-values/any-object';
-import { CreateAuthTokenUC } from '../../use-cases/create-auth-token';
+import { CreateAccessTokenUC } from '../../use-cases/create-access-token';
+import { CreateRefreshTokenUC } from '../../use-cases/create-refresh-token';
 import { CreateUserUC } from '../../use-cases/create-user';
 import { SendEmailConfirmationUC } from '../../use-cases/send-email-confirmation';
-import { badRequest, created } from '../helpers/http-helper';
+import { badRequest, created, serverError } from '../helpers/http-helper';
 import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
 export class CreateUserController implements Adapter {
   constructor(
     private createUser: CreateUserUC,
-    private createAuthToken: CreateAuthTokenUC,
+    private createAccessToken: CreateAccessTokenUC,
     private sendEmailConfirmation: SendEmailConfirmationUC,
+    private createRefreshToken: CreateRefreshTokenUC,
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
@@ -49,13 +52,20 @@ export class CreateUserController implements Adapter {
 
     const user = eitherUser.value;
 
-    const authToken = this.createAuthToken.execute(user.id.value);
-
     await this.sendEmailConfirmation.execute(user);
 
+    const accessToken = this.createAccessToken.execute(user);
+
+    const eitherRefreshToken = await this.createRefreshToken.execute(user);
+
+    if (eitherRefreshToken.isLeft()) return serverError(new ServerError());
+
+    const refreshToken = eitherRefreshToken.value;
+
     return created({
-      user: user.noHashPassValue,
-      token: authToken,
+      user: user.noConfidentialValue,
+      accessToken,
+      refreshToken,
     });
   };
 }

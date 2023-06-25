@@ -19,7 +19,7 @@ export class MeController implements Adapter {
     const user = eitherUser.value;
 
     return ok({
-      user: user.noHashPassValue,
+      user: user.noConfidentialValue,
     });
   };
 }

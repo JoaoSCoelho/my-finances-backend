@@ -1,10 +1,16 @@
 export type GenericPayload = {
-  type: 'auth' | 'confirm-email';
+  type: 'access' | 'refresh' | 'confirm-email';
   [key: string]: any;
 };
-export interface IAuthTokenPayload extends GenericPayload {
+export interface IAccessTokenPayload extends GenericPayload {
   userID: string;
-  type: 'auth';
+  confirmedEmail: boolean;
+  type: 'access';
+}
+
+export interface IRefreshTokenPayload extends GenericPayload {
+  userID: string;
+  type: 'refresh';
 }
 
 export interface IConfirmEmailPayload extends GenericPayload {

@@ -30,6 +30,10 @@ export const userSchema = new Schema(
       required: true,
       immutable: true,
     },
+    refreshTokens: {
+      type: [String],
+      required: true,
+    },
   },
   {
     timestamps: true,

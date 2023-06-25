@@ -1,4 +1,4 @@
-import { IAuthTokenPayload } from '../../external/ports/token-manager';
+import { IAccessTokenPayload } from '../../external/ports/token-manager';
 import { GetUserUC } from '../../use-cases/get-user';
 import { SendEmailConfirmationUC } from '../../use-cases/send-email-confirmation';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
@@ -11,7 +11,7 @@ export class ResendEmailConfirmationController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    const { userID } = httpRequest.nextData!.auth as IAuthTokenPayload;
+    const { userID } = httpRequest.nextData!.auth as IAccessTokenPayload;
 
     const eitherUser = await this.getUserUC.execute(userID);
 

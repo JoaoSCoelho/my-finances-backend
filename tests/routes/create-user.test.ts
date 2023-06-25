@@ -15,7 +15,7 @@ describe('Rota de criação de usuário', () => {
     await mongoose.connection.close();
   });
 
-  test('Deve criar um usuário no banco e retorná-lo com um token de acesso', async () => {
+  test('Deve criar um usuário no banco e retorná-lo com um token de acesso e um refresh token', async () => {
     const requestData = {
       username: 'nome de usuário',
       email: 'user_email2@domain.com.country',
@@ -34,7 +34,8 @@ describe('Rota de criação de usuário', () => {
         id: expect.any(String),
         createdTimestamp: expect.any(Number),
       },
-      token: expect.any(String),
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
     });
 
     expect(status).toBe(201);
@@ -42,14 +43,20 @@ describe('Rota de criação de usuário', () => {
     const jwt = new Jwt();
 
     expect(body.user.createdTimestamp).toBeLessThanOrEqual(Date.now());
-    expect(jwt.verify(body.token, apiEnv.JWT_SECRET)).toMatchObject({
-      type: 'auth',
+    expect(jwt.verify(body.accessToken, apiEnv.JWT_SECRET)).toMatchObject({
+      type: 'access',
+      userID: body.user.id,
+      confirmedEmail: false,
+    });
+    expect(jwt.verify(body.refreshToken, apiEnv.JWT_SECRET)).toMatchObject({
+      type: 'refresh',
       userID: body.user.id,
     });
 
     expect(await UserModel.findOne({ id: body.user.id })).toMatchObject({
       ...body.user,
       hashPassword: expect.any(String),
+      refreshTokens: expect.arrayContaining([body.refreshToken]),
     });
   }, 10000);
 

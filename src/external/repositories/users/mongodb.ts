@@ -8,6 +8,7 @@ import {
   FilterEqualMethod,
   GetByEmailMethod,
   GetByIdMethod,
+  PushItemToPropMethod,
   SetMethod,
   UpdatePropMethod,
   UsersRepository,
@@ -41,6 +42,24 @@ export class MongoUsers implements UsersRepository {
     const dbUser = await UserModel.findOneAndUpdate(
       { id: userID },
       { [key]: value },
+      { new: true },
+    );
+
+    if (!dbUser) return left(null);
+
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError('internal');
+
+    const user = eitherUser.value;
+
+    return right(user.value);
+  };
+
+  pushItemToProp: PushItemToPropMethod = async (userID, key, value) => {
+    const dbUser = await UserModel.findOneAndUpdate(
+      { id: userID },
+      { $push: { [key]: value } },
       { new: true },
     );
 

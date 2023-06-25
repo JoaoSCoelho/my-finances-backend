@@ -2,7 +2,7 @@ import { apiEnv } from '../../config/env';
 import { InvalidParamError } from '../../errors/invalid-param-error';
 import { MissingParamError } from '../../errors/missing-param-error';
 import {
-  IAuthTokenPayload,
+  IAccessTokenPayload,
   TokenManager,
 } from '../../external/ports/token-manager';
 import { next, unauthorized } from '../helpers/http-helper';
@@ -45,15 +45,15 @@ export class AuthMiddleware implements Adapter {
       const payload = this.tokenManager.verify(
         token,
         apiEnv.JWT_SECRET,
-      ) as IAuthTokenPayload;
+      ) as IAccessTokenPayload;
 
-      if (payload.type !== 'auth')
+      if (payload.type !== 'access')
         return unauthorized(
           new InvalidParamError(
-            'authToken',
+            'accessToken',
             token,
             'type not supported',
-            'auth',
+            'access',
           ),
         );
 
@@ -66,16 +66,16 @@ export class AuthMiddleware implements Adapter {
       if (err.message === 'jwt expired') {
         return unauthorized(
           new InvalidParamError(
-            'authToken',
+            'accessToken',
             token,
             'expired',
-            'A authToken with an expiration date greater than now',
+            'A accessToken with an expiration date greater than now',
           ),
         );
       } else {
         return unauthorized(
           new InvalidParamError(
-            'authToken',
+            'accessToken',
             token,
             'incorrect structure',
             'A valid token',

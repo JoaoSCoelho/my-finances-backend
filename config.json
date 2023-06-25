@@ -1,6 +1,7 @@
 {
   "default_encryptor_salts": 10,
-  "auth_token_expires_in": 2,
+  "access_token_expires_in": 2,
+  "refresh_token_expires_in": 24,
   "confirm_email_token_expires_in": 0.5,
   "nodemailer_host": "smtp.gmail.com",
   "nodemailer_port": 465,
