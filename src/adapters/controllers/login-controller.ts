@@ -48,12 +48,15 @@ export class LoginController implements Adapter {
 
     const accessToken = this.createAccessTokenUC.execute(user);
 
-    const refreshToken = await this.createRefreshTokenUC.execute(user);
+    const eitherRefreshToken = await this.createRefreshTokenUC.execute(user);
 
-    if (refreshToken.isLeft()) return serverError(new ServerError());
+    if (eitherRefreshToken.isLeft()) return serverError(new ServerError());
+
+    const refreshToken = eitherRefreshToken.value;
 
     return ok({
-      accessToken: accessToken,
+      accessToken,
+      refreshToken,
       user: user.noConfidentialValue,
     });
   };
