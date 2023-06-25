@@ -11,6 +11,7 @@ import { makeDeleteUserBankAccountController } from '../factories/delete-user-ba
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
 import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
+import { makeRefreshTokenController } from '../factories/refresh-token-controller';
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
 import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
@@ -18,6 +19,7 @@ const router = Router();
 
 router.post('/api/login', adaptRoute(makeLoginController()));
 router.post('/api/users', adaptRoute(makeCreateUserController()));
+router.post('/api/auth/refreshtoken', adaptRoute(makeRefreshTokenController()));
 
 router.get(
   '/api/users/me',
@@ -25,7 +27,7 @@ router.get(
   adaptRoute(makeMeController()),
 );
 router.post(
-  '/api/users/me/resend/emailWconfirmation',
+  '/api/users/me/resend/emailconfirmation',
   limiter({ max: 1, windowMs: 1000 * 60 * 15 }),
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeResendEmailConfirmation()),
