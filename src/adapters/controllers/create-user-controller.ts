@@ -46,6 +46,7 @@ export class CreateUserController implements Adapter {
       email: body.email,
       password: body.password,
       username: body.username,
+      profileImageURL: body.profileImageURL,
     });
 
     if (eitherUser.isLeft()) return badRequest(eitherUser.value);

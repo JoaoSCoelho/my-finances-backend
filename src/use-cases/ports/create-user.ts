@@ -9,6 +9,7 @@ export interface ICreateUserDTO {
   username: string;
   email: string;
   password: string;
+  profileImageURL: string;
 }
 
 export type ExecuteMethod = (

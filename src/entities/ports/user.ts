@@ -6,4 +6,5 @@ export interface IUserObject {
   createdTimestamp: number;
   confirmedEmail: boolean;
   refreshTokens: string[];
+  profileImageURL?: string;
 }

@@ -5,6 +5,7 @@ import { AnyNumber } from '../object-values/any-number';
 import { AnyString } from '../object-values/any-string';
 import { Email } from '../object-values/email';
 import { ID } from '../object-values/id';
+import { URL } from '../object-values/url';
 import { Username } from '../object-values/username';
 import { Either, left, right } from '../shared/either';
 import { IUserObject } from './ports/user';
@@ -18,6 +19,7 @@ export class User {
     public readonly createdTimestamp: AnyNumber,
     public readonly hashPassword: AnyString,
     public readonly refreshTokens: AnyArray<AnyString>,
+    public readonly profileImageURL?: URL,
   ) {
     Object.freeze(this);
   }
@@ -31,6 +33,7 @@ export class User {
       createdTimestamp: this.createdTimestamp.value,
       hashPassword: this.hashPassword.value,
       refreshTokens: this.refreshTokens.value.map((rt) => rt.value),
+      profileImageURL: this.profileImageURL?.value,
     };
   }
 
@@ -44,11 +47,12 @@ export class User {
       email: this.email.value,
       confirmedEmail: this.confirmedEmail.value,
       createdTimestamp: this.createdTimestamp.value,
+      profileImageURL: this.profileImageURL?.value,
     };
   }
 
   static create(
-    user: Record<keyof IUserObject, any>,
+    user: Partial<Record<keyof IUserObject, any>>,
   ): Either<InvalidParamError, User> {
     const eitherId = ID.create(user.id);
     const eitherUsername = Username.create(user.username);
@@ -57,6 +61,9 @@ export class User {
     const eitherCreatedTimestamp = AnyNumber.create(user.createdTimestamp);
     const eitherConfirmedEmail = AnyBoolean.create(user.confirmedEmail);
     const eitherRefreshTokensArray = AnyArray.create(user.refreshTokens);
+    const eitherProfileImageURL = user.profileImageURL
+      ? URL.create(user.profileImageURL)
+      : undefined;
 
     // Checks if there were any errors during the creation of object values
 
@@ -99,6 +106,15 @@ export class User {
           eitherRefreshTokensArray.value.expected,
         ),
       );
+    if (eitherProfileImageURL && eitherProfileImageURL.isLeft())
+      return left(
+        new InvalidParamError(
+          'profileImageURL',
+          user.profileImageURL,
+          eitherProfileImageURL.value.reason,
+          eitherProfileImageURL.value.expected,
+        ),
+      );
 
     const refreshTokensArray = eitherRefreshTokensArray.value;
     const id = eitherId.value;
@@ -107,6 +123,7 @@ export class User {
     const hashPassword = eitherHashPassword.value;
     const createdTimestamp = eitherCreatedTimestamp.value;
     const confirmedEmail = eitherConfirmedEmail.value;
+    const profileImageURL = eitherProfileImageURL?.value;
 
     const eithersRefreshTokens = refreshTokensArray.value.map((rt) =>
       AnyString.create(rt),
@@ -142,6 +159,7 @@ export class User {
         createdTimestamp,
         hashPassword,
         refreshTokens,
+        profileImageURL,
       ),
     );
   }
