@@ -60,6 +60,41 @@ describe('Rota de criação de usuário', () => {
     });
   }, 10000);
 
+  test('Deve criar um usuário no banco com profileImageURL', async () => {
+    const requestData = {
+      username: 'nome de usuário',
+      email: 'user_email_piurl@domain.com.country',
+      password: 'mysecure@password2023',
+      profileImageURL:
+        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1064&q=80',
+    };
+
+    const { body, status } = await supertest(app)
+      .post('/api/users')
+      .send(requestData);
+
+    expect(body).toEqual({
+      user: {
+        username: requestData.username,
+        email: requestData.email,
+        confirmedEmail: false,
+        id: expect.any(String),
+        createdTimestamp: expect.any(Number),
+        profileImageURL: requestData.profileImageURL,
+      },
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
+    });
+
+    expect(status).toBe(201);
+
+    expect(await UserModel.findOne({ id: body.user.id })).toMatchObject({
+      ...body.user,
+      hashPassword: expect.any(String),
+      refreshTokens: expect.arrayContaining([body.refreshToken]),
+    });
+  }, 10000);
+
   test('Deve retornar um erro por já possuir um usuário com o mesmo email', async () => {
     const requestData = {
       username: 'nome de usuário',
