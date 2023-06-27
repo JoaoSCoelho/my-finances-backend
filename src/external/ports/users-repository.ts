@@ -1,6 +1,10 @@
 import { IUserObject } from '../../entities/ports/user';
 import { Either } from '../../shared/either';
 
+type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[]
+  ? ElementType
+  : never;
+
 export type ExistsWithThisIDMethod = (userID: string) => Promise<boolean>;
 export type ExistsWithThisEmailMethod = (email: string) => Promise<boolean>;
 export type SetMethod = (user: IUserObject) => Promise<IUserObject>;
@@ -26,6 +30,18 @@ export type GetByIdMethod = (
 export type GetByEmailMethod = (
   email: string,
 ) => Promise<Either<null, IUserObject>>;
+export type PushItemToPropMethod = <
+  K extends keyof IUserObject,
+  A extends IUserObject[K],
+>(
+  userID: string,
+  key: K,
+  value: ArrElement<A>,
+) => Promise<Either<null, IUserObject>>;
+export type UpdateMethod = <K extends keyof IUserObject>(
+  userID: string,
+  data: Record<K, IUserObject[K]>,
+) => Promise<Either<null, IUserObject>>;
 
 export type UsersRepository = {
   existsWithThisID: ExistsWithThisIDMethod;
@@ -36,4 +52,6 @@ export type UsersRepository = {
   delete: DeleteMethod;
   getById: GetByIdMethod;
   getByEmail: GetByEmailMethod;
+  pushItemToProp: PushItemToPropMethod;
+  update: UpdateMethod;
 };

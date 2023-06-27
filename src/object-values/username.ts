@@ -36,7 +36,7 @@ export class Username {
         new InvalidParamError(
           'username',
           username,
-          'greater than maximum characters',
+          'greater than the maximum characters',
           `Less or equal than ${this.maximumLength} characters`,
         ),
       );

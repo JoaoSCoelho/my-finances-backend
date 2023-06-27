@@ -38,7 +38,7 @@ export class BankAccountName {
         new InvalidParamError(
           'bankAccountName',
           bankAccountName,
-          'greater than maximum characters',
+          'greater than the maximum characters',
           `Less or equal than ${this.maximumLength} characters`,
         ),
       );

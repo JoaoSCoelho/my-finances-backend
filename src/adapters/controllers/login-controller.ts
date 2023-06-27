@@ -1,6 +1,8 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
+import { ServerError } from '../../errors/server-error';
 import { AnyObject } from '../../object-values/any-object';
-import { CreateAuthTokenUC } from '../../use-cases/create-auth-token';
+import { CreateAccessTokenUC } from '../../use-cases/create-access-token';
+import { CreateRefreshTokenUC } from '../../use-cases/create-refresh-token';
 import { LoginUC } from '../../use-cases/login';
 import {
   badRequest,
@@ -13,7 +15,8 @@ import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 export class LoginController implements Adapter {
   constructor(
     private loginUC: LoginUC,
-    private createAuthTokenUC: CreateAuthTokenUC,
+    private createAccessTokenUC: CreateAccessTokenUC,
+    private createRefreshTokenUC: CreateRefreshTokenUC,
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
@@ -43,11 +46,18 @@ export class LoginController implements Adapter {
 
     const user = eitherUser.value;
 
-    const authToken = this.createAuthTokenUC.execute(user.id.value);
+    const accessToken = this.createAccessTokenUC.execute(user);
+
+    const eitherRefreshToken = await this.createRefreshTokenUC.execute(user);
+
+    if (eitherRefreshToken.isLeft()) return serverError(new ServerError());
+
+    const refreshToken = eitherRefreshToken.value;
 
     return ok({
-      token: authToken,
-      user: user.noHashPassValue,
+      accessToken,
+      refreshToken,
+      user: user.noConfidentialValue,
     });
   };
 }

@@ -44,6 +44,8 @@ export class CreateUserUC {
       hashPassword,
       confirmedEmail: false,
       createdTimestamp: Date.now(),
+      refreshTokens: [],
+      profileImageURL: data.profileImageURL,
     });
 
     if (eitherUser.isLeft()) return left(eitherUser.value);

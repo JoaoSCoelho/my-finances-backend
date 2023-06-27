@@ -30,6 +30,14 @@ export const userSchema = new Schema(
       required: true,
       immutable: true,
     },
+    refreshTokens: {
+      type: [String],
+      required: true,
+    },
+    profileImageURL: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

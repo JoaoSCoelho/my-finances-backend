@@ -5,4 +5,6 @@ export interface IUserObject {
   hashPassword: string;
   createdTimestamp: number;
   confirmedEmail: boolean;
+  refreshTokens: string[];
+  profileImageURL?: string;
 }
