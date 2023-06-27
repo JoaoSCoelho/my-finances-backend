@@ -38,6 +38,10 @@ export type PushItemToPropMethod = <
   key: K,
   value: ArrElement<A>,
 ) => Promise<Either<null, IUserObject>>;
+export type UpdateMethod = <K extends keyof IUserObject>(
+  userID: string,
+  data: Record<K, IUserObject[K]>,
+) => Promise<Either<null, IUserObject>>;
 
 export type UsersRepository = {
   existsWithThisID: ExistsWithThisIDMethod;
@@ -49,4 +53,5 @@ export type UsersRepository = {
   getById: GetByIdMethod;
   getByEmail: GetByEmailMethod;
   pushItemToProp: PushItemToPropMethod;
+  update: UpdateMethod;
 };

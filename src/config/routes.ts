@@ -4,6 +4,7 @@ import { adaptRoute } from '../adapters/route-adapter';
 import { limiter } from '../default-middlewares/default-rate-limit';
 import { makeAuthMiddleware } from '../factories/auth-middleware';
 import { makeConfirmEmailController } from '../factories/confirm-email-controller';
+import { makeConfirmedEmailMiddleware } from '../factories/confirmed-email-middleware';
 import { makeCreateBankAccountController } from '../factories/create-bank-account-controller';
 import { makeCreateExpenseController } from '../factories/create-expense';
 import { makeCreateUserController } from '../factories/create-user-controller';
@@ -13,6 +14,7 @@ import { makeMeController } from '../factories/me-controller';
 import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
 import { makeRefreshTokenController } from '../factories/refresh-token-controller';
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
+import { makeUpdateMeController } from '../factories/update-me-controller';
 import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
 const router = Router();
@@ -31,6 +33,12 @@ router.post(
   limiter({ max: 1, windowMs: 1000 * 60 * 15 }),
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeResendEmailConfirmation()),
+);
+router.put(
+  '/api/users/me',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeUpdateMeController()),
 );
 router.get(
   '/api/confirmemail/:token',

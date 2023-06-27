@@ -10,6 +10,7 @@ import {
   GetByIdMethod,
   PushItemToPropMethod,
   SetMethod,
+  UpdateMethod,
   UpdatePropMethod,
   UsersRepository,
 } from '../../ports/users-repository';
@@ -110,6 +111,22 @@ export class MongoUsers implements UsersRepository {
 
   getByEmail: GetByEmailMethod = async (email) => {
     const dbUser = await UserModel.findOne({ email });
+
+    if (!dbUser) return left(null);
+
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError('internal');
+
+    const user = eitherUser.value;
+
+    return right(user.value);
+  };
+
+  update: UpdateMethod = async (userID, data) => {
+    const dbUser = await UserModel.findOneAndUpdate({ id: userID }, data, {
+      new: true,
+    });
 
     if (!dbUser) return left(null);
 
