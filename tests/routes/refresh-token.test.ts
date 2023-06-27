@@ -15,11 +15,12 @@ const bcrypt = new Bcrypt();
 describe('Rota para renovar o token de acesso do usuário', () => {
   beforeAll(async () => {
     await UserModel.deleteMany();
-  });
+  }, 15000);
 
   afterAll(async () => {
+    await UserModel.deleteMany();
     await mongoose.connection.close();
-  });
+  }, 15000);
 
   test('Deve retornar um novo accessToken e refreshToken e substituir o refreshToken no banco', async () => {
     const {
