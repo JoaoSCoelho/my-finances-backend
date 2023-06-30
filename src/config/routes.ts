@@ -9,6 +9,7 @@ import { makeCreateBankAccountController } from '../factories/create-bank-accoun
 import { makeCreateExpenseController } from '../factories/create-expense';
 import { makeCreateUserController } from '../factories/create-user-controller';
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
+import { makeGetMyExpensesController } from '../factories/get-my-expenses-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
 import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
@@ -65,9 +66,15 @@ router.delete(
   adaptRoute(makeDeleteUserBankAccountController()),
 );
 router.post(
-  '/api/expenses',
+  '/api/transactions/expenses',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeCreateExpenseController()),
+);
+router.get(
+  '/api/transactions/expenses',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeGetMyExpensesController()),
 );
 
 console.log('→ Loaded routes');

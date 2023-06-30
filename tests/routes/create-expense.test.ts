@@ -66,7 +66,7 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/expenses')
+      .post('/api/transactions/expenses')
       .set({ Authorization: `Bearer ${accessToken}` })
       .send(expenseData);
 
@@ -130,7 +130,7 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/expenses')
+      .post('/api/transactions/expenses')
       .set({ Authorization: `Bearer ${accessToken}` })
       .send(expenseData);
 
