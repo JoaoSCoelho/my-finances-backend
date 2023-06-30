@@ -1,4 +1,4 @@
-import { IBankAccountObject } from '../../entities/ports/bank-account';
+import { IBankAccountObject } from '../../entities/bank-account';
 import { Either } from '../../shared/either';
 
 export type SetMethod = (
@@ -28,6 +28,15 @@ export type DeleteMethod = (id: string) => Promise<void>;
 export type ExistsWithThisIDMethod = (
   bankAccountId: string,
 ) => Promise<boolean>;
+export type ExistsMethod = (
+  filter: Partial<IBankAccountObject>,
+) => Promise<boolean>;
+export type FindWithThisPropsMethod = <
+  K extends keyof IBankAccountObject,
+  V extends IBankAccountObject[K],
+>(
+  filter: Partial<Record<K, V>>,
+) => Promise<Either<null, IBankAccountObject>>;
 
 export type BankAccountsRepository = {
   set: SetMethod;
@@ -36,4 +45,6 @@ export type BankAccountsRepository = {
   update: UpdateMethod;
   delete: DeleteMethod;
   existsWithThisID: ExistsWithThisIDMethod;
+  exists: ExistsMethod;
+  findWithThisProps: FindWithThisPropsMethod;
 };

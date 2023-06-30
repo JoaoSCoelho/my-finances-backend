@@ -7,49 +7,49 @@ import { NoNegativeAmount } from '../object-values/no-negative-amount';
 import { TransactionTitle } from '../object-values/transaction-title';
 import { Either, left, right } from '../shared/either';
 
-export interface IExpenseObject {
+export interface IIncomeObject {
   id: string;
   bankAccountId: string;
-  spent: number;
+  gain: number;
   description?: string;
   createdTimestamp: number;
   title: string;
 }
 
-export class Expense {
+export class Income {
   private constructor(
     public readonly id: ID,
     public readonly bankAccountId: ID,
     public readonly title: TransactionTitle,
-    public readonly spent: NoNegativeAmount,
+    public readonly gain: NoNegativeAmount,
     public readonly createdTimestamp: AnyNumber,
     public readonly description?: AnyString,
   ) {
     Object.freeze(this);
   }
 
-  get value(): IExpenseObject {
+  get value(): IIncomeObject {
     return {
       id: this.id.value,
       bankAccountId: this.bankAccountId.value,
       description: this.description?.value,
-      spent: this.spent.value,
+      gain: this.gain.value,
       createdTimestamp: this.createdTimestamp.value,
       title: this.title.value,
     };
   }
 
   static create(
-    expense: Partial<Record<keyof IExpenseObject, any>>,
-  ): Either<InvalidParamError, Expense> {
-    const eitherId = ID.create(expense.id);
-    const eitherBankAccountId = ID.create(expense.bankAccountId);
-    const eitherDescription = expense.description
-      ? AnyString.create(expense.description)
+    income: Partial<Record<keyof IIncomeObject, any>>,
+  ): Either<InvalidParamError, Income> {
+    const eitherId = ID.create(income.id);
+    const eitherBankAccountId = ID.create(income.bankAccountId);
+    const eitherDescription = income.description
+      ? AnyString.create(income.description)
       : undefined;
-    const eitherSpent = Amount.create(expense.spent);
-    const eitherCreatedTimestamp = AnyNumber.create(expense.createdTimestamp);
-    const eitherTitle = TransactionTitle.create(expense.title);
+    const eitherGain = Amount.create(income.gain);
+    const eitherCreatedTimestamp = AnyNumber.create(income.createdTimestamp);
+    const eitherTitle = TransactionTitle.create(income.title);
 
     // Checks if there were any errors during the creation of object values
 
@@ -59,7 +59,7 @@ export class Expense {
       return left(
         new InvalidParamError(
           'bankAccountId',
-          expense.bankAccountId,
+          income.bankAccountId,
           eitherBankAccountId.value.reason,
           eitherBankAccountId.value.expected,
         ),
@@ -68,25 +68,25 @@ export class Expense {
       return left(
         new InvalidParamError(
           'description',
-          expense.description,
+          income.description,
           eitherDescription.value.reason,
           eitherDescription.value.expected,
         ),
       );
-    if (eitherSpent.isLeft())
+    if (eitherGain.isLeft())
       return left(
         new InvalidParamError(
-          'spent',
-          expense.spent,
-          eitherSpent.value.reason,
-          eitherSpent.value.expected,
+          'gain',
+          income.gain,
+          eitherGain.value.reason,
+          eitherGain.value.expected,
         ),
       );
     if (eitherCreatedTimestamp.isLeft())
       return left(
         new InvalidParamError(
           'createdTimestamp',
-          expense.createdTimestamp,
+          income.createdTimestamp,
           eitherCreatedTimestamp.value.reason,
           eitherCreatedTimestamp.value.expected,
         ),
@@ -95,21 +95,14 @@ export class Expense {
     const id = eitherId.value;
     const bankAccountId = eitherBankAccountId.value;
     const description = eitherDescription?.value;
-    const spent = eitherSpent.value;
+    const gain = eitherGain.value;
     const createdTimestamp = eitherCreatedTimestamp.value;
     const title = eitherTitle.value;
 
-    // Returns a new Expense entity
+    // Returns a new Income entity
 
     return right(
-      new Expense(
-        id,
-        bankAccountId,
-        title,
-        spent,
-        createdTimestamp,
-        description,
-      ),
+      new Income(id, bankAccountId, title, gain, createdTimestamp, description),
     );
   }
 }

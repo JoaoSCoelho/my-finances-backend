@@ -1,10 +1,10 @@
 import config from '../../config.json';
 import { apiEnv } from '../config/env';
+import { User } from '../entities/user';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
 import { TokenManager } from '../external/ports/token-manager';
 import { UsersRepository } from '../external/ports/users-repository';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/create-refresh-token';
+import { Either, left, right } from '../shared/either';
 
 export class CreateRefreshTokenUC {
   constructor(
@@ -12,7 +12,9 @@ export class CreateRefreshTokenUC {
     private usersRepository: UsersRepository,
   ) {}
 
-  execute: ExecuteMethod = async (user) => {
+  async execute(
+    user: User,
+  ): Promise<Either<ThereIsNoEntityWithThisPropError, string>> {
     const refreshToken = this.tokenManager.generate(
       {
         userID: user.id.value,
@@ -34,5 +36,5 @@ export class CreateRefreshTokenUC {
       );
 
     return right(refreshToken);
-  };
+  }
 }

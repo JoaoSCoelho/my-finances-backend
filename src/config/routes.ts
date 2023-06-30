@@ -65,7 +65,7 @@ router.delete(
   adaptRoute(makeDeleteUserBankAccountController()),
 );
 router.post(
-  '/api/bankaccounts/:id/',
+  '/api/expenses',
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeCreateExpenseController()),
 );

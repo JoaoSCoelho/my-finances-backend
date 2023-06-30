@@ -6,13 +6,20 @@ import { UsersRepository } from '../external/ports/users-repository';
 import { AnyObject } from '../object-values/any-object';
 import { URL } from '../object-values/url';
 import { Username } from '../object-values/username';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/update-user';
+import { Either, left, right } from '../shared/either';
 
 export class UpdateUserUC {
   constructor(private usersRepository: UsersRepository) {}
 
-  execute: ExecuteMethod = async (userID, anyUpdateObject) => {
+  async execute(
+    userID: string,
+    anyUpdateObject: any,
+  ): Promise<
+    Either<
+      InvalidParamError | ThereIsNoEntityWithThisPropError | ServerError,
+      User
+    >
+  > {
     const eitherUpdateObject = AnyObject.create(anyUpdateObject);
 
     if (eitherUpdateObject.isLeft()) {
@@ -71,5 +78,5 @@ export class UpdateUserUC {
     const updatedUser = eitherUpdatedUser.value;
 
     return right(updatedUser);
-  };
+  }
 }

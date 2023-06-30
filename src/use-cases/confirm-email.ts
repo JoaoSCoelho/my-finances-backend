@@ -6,8 +6,7 @@ import {
   TokenManager,
 } from '../external/ports/token-manager';
 import { UsersRepository } from '../external/ports/users-repository';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/confirm-email';
+import { Either, left, right } from '../shared/either';
 
 export class ConfirmEmailUC {
   constructor(
@@ -15,7 +14,11 @@ export class ConfirmEmailUC {
     private usersRepository: UsersRepository,
   ) {}
 
-  execute: ExecuteMethod = async (token) => {
+  async execute(
+    token: string,
+  ): Promise<
+    Either<InvalidParamError | ThereIsNoEntityWithThisPropError, void>
+  > {
     try {
       const payload = this.tokenManager.verify(
         token,
@@ -64,5 +67,5 @@ export class ConfirmEmailUC {
           ),
         );
     }
-  };
+  }
 }

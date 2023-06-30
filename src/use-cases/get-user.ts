@@ -2,13 +2,14 @@ import { User } from '../entities/user';
 import { ServerError } from '../errors/server-error';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
 import { UsersRepository } from '../external/ports/users-repository';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/get-user';
+import { Either, left, right } from '../shared/either';
 
 export class GetUserUC {
   constructor(private usersRepository: UsersRepository) {}
 
-  execute: ExecuteMethod = async (userID) => {
+  async execute(
+    userID: string,
+  ): Promise<Either<ThereIsNoEntityWithThisPropError | ServerError, User>> {
     const eitherUserObject = await this.usersRepository.getById(userID);
 
     if (eitherUserObject.isLeft())
@@ -23,5 +24,5 @@ export class GetUserUC {
     const user = eitherUser.value;
 
     return right(user);
-  };
+  }
 }

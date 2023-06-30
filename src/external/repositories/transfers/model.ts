@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-export const expenseSchema = new Schema(
+export const transferSchema = new Schema(
   {
     id: {
       type: String,
@@ -14,11 +14,15 @@ export const expenseSchema = new Schema(
       type: String,
       required: true,
     },
-    spent: {
+    amount: {
       type: Number,
       required: true,
     },
-    bankAccountId: {
+    giverBankAccountId: {
+      type: String,
+      required: true,
+    },
+    receiverBankAccountId: {
       type: String,
       required: true,
     },
@@ -32,4 +36,4 @@ export const expenseSchema = new Schema(
   },
 );
 
-export const ExpenseModel = model('Expense', expenseSchema);
+export const TransferModel = model('Transfer', transferSchema);

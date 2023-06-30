@@ -8,7 +8,17 @@ import { ID } from '../object-values/id';
 import { URL } from '../object-values/url';
 import { Username } from '../object-values/username';
 import { Either, left, right } from '../shared/either';
-import { IUserObject } from './ports/user';
+
+export interface IUserObject {
+  id: string;
+  username: string;
+  email: string;
+  hashPassword: string;
+  createdTimestamp: number;
+  confirmedEmail: boolean;
+  refreshTokens: string[];
+  profileImageURL?: string;
+}
 
 export class User {
   private constructor(
