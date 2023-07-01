@@ -1,4 +1,4 @@
-import { IUserObject } from '../../entities/ports/user';
+import { IUserObject } from '../../entities/user';
 import { Either } from '../../shared/either';
 
 type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[]

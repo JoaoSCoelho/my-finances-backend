@@ -1,13 +1,20 @@
 import config from '../../config.json';
 import { User } from '../entities/user';
+import { InvalidParamError } from '../errors/invalid-param-error';
 import { ThereIsAlreadyEntityWithThisPropError } from '../errors/there-is-already-entity-with-this-prop-error';
 import { EncryptorProvider } from '../external/ports/encryptor-provider';
 import { GeneratorIDProvider } from '../external/ports/generator-id-provider';
 import { UsersRepository } from '../external/ports/users-repository';
 import { Email } from '../object-values/email';
 import { Password } from '../object-values/password';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/create-user';
+import { Either, left, right } from '../shared/either';
+
+export interface ICreateUserDTO {
+  username: string;
+  email: string;
+  password: string;
+  profileImageURL: string;
+}
 
 export class CreateUserUC {
   constructor(
@@ -16,7 +23,11 @@ export class CreateUserUC {
     private usersRepository: UsersRepository,
   ) {}
 
-  execute: ExecuteMethod = async (data) => {
+  async execute(
+    data: Record<keyof ICreateUserDTO, any>,
+  ): Promise<
+    Either<InvalidParamError | ThereIsAlreadyEntityWithThisPropError, User>
+  > {
     // Checks the structure of the received password and e-mail
 
     const eitherPassword = Password.create(data.password);
@@ -72,5 +83,5 @@ export class CreateUserUC {
     await this.usersRepository.set(user.value);
 
     return right(user);
-  };
+  }
 }

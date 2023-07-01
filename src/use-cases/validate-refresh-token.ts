@@ -10,8 +10,7 @@ import {
 } from '../external/ports/token-manager';
 import { UsersRepository } from '../external/ports/users-repository';
 import { AnyString } from '../object-values/any-string';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/validate-refresh-token';
+import { Either, left, right } from '../shared/either';
 
 export class ValidateRefreshTokenUC {
   constructor(
@@ -19,7 +18,14 @@ export class ValidateRefreshTokenUC {
     private tokenManager: TokenManager,
   ) {}
 
-  execute: ExecuteMethod = async (refreshToken) => {
+  async execute(
+    refreshToken: any,
+  ): Promise<
+    Either<
+      InvalidParamError | ThereIsNoEntityWithThisPropError | ServerError,
+      User
+    >
+  > {
     const eitherRefreshToken = AnyString.create(refreshToken);
 
     if (eitherRefreshToken.isLeft())
@@ -119,5 +125,5 @@ export class ValidateRefreshTokenUC {
           ),
         );
     }
-  };
+  }
 }

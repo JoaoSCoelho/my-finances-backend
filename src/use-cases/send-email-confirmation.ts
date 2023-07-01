@@ -3,9 +3,9 @@ import { readFileSync } from 'fs';
 import config from '../../config.json';
 import { apiEnv } from '../config/env';
 import { transporter } from '../config/nodemailer';
+import { User } from '../entities/user';
 import { EmailProvider } from '../external/ports/email-provider';
 import { TokenManager } from '../external/ports/token-manager';
-import { ExecuteMethod } from './ports/send-email-confirmation';
 
 export class SendEmailConfirmationUC {
   constructor(
@@ -13,7 +13,7 @@ export class SendEmailConfirmationUC {
     private tokenManager: TokenManager,
   ) {}
 
-  execute: ExecuteMethod = async (user) => {
+  async execute(user: User) {
     const emailTemplate = readFileSync(
       './src/templates/confirm-email.html',
     ).toString();
@@ -38,5 +38,5 @@ export class SendEmailConfirmationUC {
       undefined,
       emailContent,
     );
-  };
+  }
 }

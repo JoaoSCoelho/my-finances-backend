@@ -4,9 +4,11 @@ import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
   DeleteMethod,
+  ExistsMethod,
   ExistsWithThisIDMethod,
   FilterEqualMethod,
   FilterWithThisPropsMethod,
+  FindWithThisPropsMethod,
   SetMethod,
   UpdateMethod,
 } from '../../ports/bank-accounts-repository';
@@ -47,6 +49,20 @@ export class MongoBankAccounts implements BankAccountsRepository {
     });
   };
 
+  findWithThisProps: FindWithThisPropsMethod = async (filter) => {
+    const dbBankAccountObject = await BankAccountModel.findOne(filter);
+
+    if (!dbBankAccountObject) return left(null);
+
+    const eitherBankAccount = BankAccount.create(dbBankAccountObject);
+
+    if (eitherBankAccount.isLeft()) throw new ServerError('internal');
+
+    const bankAccount = eitherBankAccount.value;
+
+    return right(bankAccount.value);
+  };
+
   update: UpdateMethod = async (id, updateObject) => {
     const dbBankAccount = await BankAccountModel.findOneAndUpdate(
       { id },
@@ -60,9 +76,9 @@ export class MongoBankAccounts implements BankAccountsRepository {
 
     if (eitherBankAccount.isLeft()) throw new ServerError();
 
-    const user = eitherBankAccount.value;
+    const bankAccount = eitherBankAccount.value;
 
-    return right(user.value);
+    return right(bankAccount.value);
   };
 
   delete: DeleteMethod = async (id) => {
@@ -77,6 +93,14 @@ export class MongoBankAccounts implements BankAccountsRepository {
     });
 
     if (!documentWithThisID) return false;
+
+    return true;
+  };
+
+  exists: ExistsMethod = async (filter) => {
+    const documentExists = await BankAccountModel.exists(filter);
+
+    if (!documentExists) return false;
 
     return true;
   };

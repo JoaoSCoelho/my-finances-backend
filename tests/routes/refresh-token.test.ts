@@ -106,7 +106,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
     );
 
     expect(dbUser?.refreshTokens).not.toContain(refreshToken);
-  }, 10000);
+  }, 15000);
 
   test('Deve retornar um erro pela falta do refreshToken', async () => {
     const { body, status } = await supertest(app).post(

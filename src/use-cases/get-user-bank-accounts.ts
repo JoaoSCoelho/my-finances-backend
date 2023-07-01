@@ -1,13 +1,12 @@
 import { BankAccount } from '../entities/bank-account';
 import { ServerError } from '../errors/server-error';
 import { BankAccountsRepository } from '../external/ports/bank-accounts-repository';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/get-user-bank-accounts';
+import { Either, left, right } from '../shared/either';
 
 export class GetUserBankAccountsUC {
   constructor(private bankAccountsRepository: BankAccountsRepository) {}
 
-  execute: ExecuteMethod = async (userID: string) => {
+  async execute(userID: string): Promise<Either<ServerError, BankAccount[]>> {
     const bankAccountsObjects = await this.bankAccountsRepository.filterEqual(
       'userId',
       userID,
@@ -27,5 +26,5 @@ export class GetUserBankAccountsUC {
     );
 
     return right(bankAccounts);
-  };
+  }
 }

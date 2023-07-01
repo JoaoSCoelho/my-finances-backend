@@ -5,7 +5,15 @@ import { BankAccountName } from '../object-values/bank-account-name';
 import { ID } from '../object-values/id';
 import { URL } from '../object-values/url';
 import { Either, left, right } from '../shared/either';
-import { IBankAccountObject } from './ports/bank-account';
+
+export interface IBankAccountObject {
+  id: string;
+  userId: string;
+  createdTimestamp: number;
+  name: string;
+  amount: number;
+  imageURL?: string;
+}
 
 export class BankAccount {
   private constructor(
