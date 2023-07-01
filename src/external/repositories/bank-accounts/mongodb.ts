@@ -76,9 +76,9 @@ export class MongoBankAccounts implements BankAccountsRepository {
 
     if (eitherBankAccount.isLeft()) throw new ServerError();
 
-    const user = eitherBankAccount.value;
+    const bankAccount = eitherBankAccount.value;
 
-    return right(user.value);
+    return right(bankAccount.value);
   };
 
   delete: DeleteMethod = async (id) => {

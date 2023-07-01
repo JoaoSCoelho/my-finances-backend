@@ -16,6 +16,7 @@ import { makeMyBankAccountsController } from '../factories/my-bank-accounts-cont
 import { makeRefreshTokenController } from '../factories/refresh-token-controller';
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
 import { makeUpdateMeController } from '../factories/update-me-controller';
+import { makeUpdateMyExpenseController } from '../factories/update-my-expense-controller';
 import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
 const router = Router();
@@ -75,6 +76,12 @@ router.get(
   '/api/transactions/expenses',
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeGetMyExpensesController()),
+);
+router.put(
+  '/api/transactions/expenses/:id',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeUpdateMyExpenseController()),
 );
 
 console.log('→ Loaded routes');
