@@ -8,6 +8,7 @@ import { makeConfirmedEmailMiddleware } from '../factories/confirmed-email-middl
 import { makeCreateBankAccountController } from '../factories/create-bank-account-controller';
 import { makeCreateExpenseController } from '../factories/create-expense';
 import { makeCreateUserController } from '../factories/create-user-controller';
+import { makeDeleteMyExpenseController } from '../factories/delete-my-expense-controller';
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeGetMyExpensesController } from '../factories/get-my-expenses-controller';
 import { makeLoginController } from '../factories/login-controller';
@@ -82,6 +83,12 @@ router.put(
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeUpdateMyExpenseController()),
+);
+router.delete(
+  '/api/transactions/expenses/:id',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeDeleteMyExpenseController()),
 );
 
 console.log('→ Loaded routes');
