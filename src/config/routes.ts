@@ -7,10 +7,13 @@ import { makeConfirmEmailController } from '../factories/confirm-email-controlle
 import { makeConfirmedEmailMiddleware } from '../factories/confirmed-email-middleware';
 import { makeCreateBankAccountController } from '../factories/create-bank-account-controller';
 import { makeCreateExpenseController } from '../factories/create-expense';
+import { makeCreateIncomeController } from '../factories/create-income-controller';
 import { makeCreateUserController } from '../factories/create-user-controller';
 import { makeDeleteMyExpenseController } from '../factories/delete-my-expense-controller';
+import { makeDeleteMyIncomeController } from '../factories/delete-my-income-controller';
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeGetMyExpensesController } from '../factories/get-my-expenses-controller';
+import { makeGetMyIncomesController } from '../factories/get-my-incomes-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
 import { makeMyBankAccountsController } from '../factories/my-bank-accounts-controller';
@@ -18,6 +21,7 @@ import { makeRefreshTokenController } from '../factories/refresh-token-controlle
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
 import { makeUpdateMeController } from '../factories/update-me-controller';
 import { makeUpdateMyExpenseController } from '../factories/update-my-expense-controller';
+import { makeUpdateMyIncomeController } from '../factories/update-my-income-controller';
 import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
 const router = Router();
@@ -89,6 +93,29 @@ router.delete(
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeDeleteMyExpenseController()),
+);
+router.post(
+  '/api/transactions/incomes',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeCreateIncomeController()),
+);
+router.get(
+  '/api/transactions/incomes',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeGetMyIncomesController()),
+);
+router.put(
+  '/api/transactions/incomes/:id',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeUpdateMyIncomeController()),
+);
+router.delete(
+  '/api/transactions/incomes/:id',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeDeleteMyIncomeController()),
 );
 
 console.log('→ Loaded routes');
