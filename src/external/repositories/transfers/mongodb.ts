@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   DeleteMethod,
+  FilterWithThisPossibilitiesMethod,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
   SetMethod,
@@ -20,6 +21,22 @@ export class MongoTransfers implements TransfersRepository {
 
   filterWithThisProps: FilterWithThisPropsMethod = async (filter) => {
     const dbTransfers = await TransferModel.find(filter);
+
+    return dbTransfers.map((dbTransfer) => {
+      const eitherTransfer = Transfer.create(dbTransfer);
+
+      if (eitherTransfer.isLeft()) throw new ServerError();
+
+      const transfer = eitherTransfer.value;
+
+      return transfer.value;
+    });
+  };
+
+  filterWithThisPossibilities: FilterWithThisPossibilitiesMethod = async (
+    filters,
+  ) => {
+    const dbTransfers = await TransferModel.find({ $or: filters });
 
     return dbTransfers.map((dbTransfer) => {
       const eitherTransfer = Transfer.create(dbTransfer);

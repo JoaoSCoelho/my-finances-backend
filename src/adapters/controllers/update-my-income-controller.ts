@@ -38,6 +38,7 @@ export class UpdateMyIncomeController implements Adapter {
         description: body.description,
         title: body.title,
         gain: body.gain,
+        bankAccountId: body.bankAccountId,
       },
     );
 

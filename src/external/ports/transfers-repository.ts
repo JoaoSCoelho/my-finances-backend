@@ -8,6 +8,12 @@ export type FilterWithThisPropsMethod = <
 >(
   filter: Partial<Record<K, V>>,
 ) => Promise<ITransferObject[]>;
+export type FilterWithThisPossibilitiesMethod = <
+  K extends keyof ITransferObject,
+  V extends ITransferObject[K],
+>(
+  filters: Partial<Record<K, V>>[],
+) => Promise<ITransferObject[]>;
 export type FindWithThisPropsMethod = <
   K extends keyof ITransferObject,
   V extends ITransferObject[K],
@@ -26,6 +32,7 @@ export type DeleteMethod = (id: string) => Promise<void>;
 export type TransfersRepository = {
   set: SetMethod;
   filterWithThisProps: FilterWithThisPropsMethod;
+  filterWithThisPossibilities: FilterWithThisPossibilitiesMethod;
   findWithThisProps: FindWithThisPropsMethod;
   update: UpdateMethod;
   delete: DeleteMethod;

@@ -38,6 +38,7 @@ export class UpdateMyExpenseController implements Adapter {
         description: body.description,
         title: body.title,
         spent: body.spent,
+        bankAccountId: body.bankAccountId,
       },
     );
 
