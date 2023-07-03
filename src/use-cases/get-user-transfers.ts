@@ -23,7 +23,12 @@ export class GetUserTransfersUC {
           ]);
         }),
       )
-    ).reduce((prev, curr) => prev.concat(curr), []);
+    )
+      .reduce((prev, curr) => prev.concat(curr), [])
+      .filter(
+        (transferObject, i, arr) =>
+          arr.findIndex((to) => to.id === transferObject.id) === i,
+      );
 
     const eitherTransfers = transfersObjects.map((transferObject) =>
       Transfer.create(transferObject),
