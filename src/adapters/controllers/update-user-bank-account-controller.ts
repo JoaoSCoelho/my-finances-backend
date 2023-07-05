@@ -1,12 +1,16 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
 import { AnyObject } from '../../object-values/any-object';
 import { ID } from '../../object-values/id';
+import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserBankAccountUC } from '../../use-cases/update-user-bank-account';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
 import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
 export class UpdateUserBankAccountController implements Adapter {
-  constructor(private updateUserBankAccountUC: UpdateUserBankAccountUC) {}
+  constructor(
+    private updateUserBankAccountUC: UpdateUserBankAccountUC,
+    private calculateBankAccountAmountUC: CalculateBankAccountAmountUC,
+  ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
     const eitherBody = AnyObject.create(httpRequest.body);
@@ -49,8 +53,12 @@ export class UpdateUserBankAccountController implements Adapter {
 
     const bankAccount = eitherBankAccount.value;
 
+    const bankAccountAmount = (
+      await this.calculateBankAccountAmountUC.execute(bankAccount.id.value)
+    ).value as number;
+
     return ok({
-      bankAccount: bankAccount.value,
+      bankAccount: { ...bankAccount.value, totalAmount: bankAccountAmount },
     });
   };
 }
