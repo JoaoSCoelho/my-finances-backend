@@ -38,13 +38,13 @@ export class UpdateMyTransferController implements Adapter {
         ? {
             description: body.description,
             title: body.title,
-            amount: body.spent,
+            amount: body.amount,
             giverBankAccountId: body.giverBankAccountId,
             receiverBankAccountId: body.receiverBankAccountId,
           }
         : {
             title: body.title,
-            amount: body.spent,
+            amount: body.amount,
             giverBankAccountId: body.giverBankAccountId,
             receiverBankAccountId: body.receiverBankAccountId,
           },
