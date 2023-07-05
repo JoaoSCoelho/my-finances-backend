@@ -34,12 +34,18 @@ export class UpdateMyIncomeController implements Adapter {
     const eitherUpdateIncome = await this.updateUserIncomeUC.execute(
       payload.userID,
       httpRequest.params.id,
-      {
-        description: body.description,
-        title: body.title,
-        gain: body.gain,
-        bankAccountId: body.bankAccountId,
-      },
+      body.description
+        ? {
+            description: body.description,
+            title: body.title,
+            gain: body.gain,
+            bankAccountId: body.bankAccountId,
+          }
+        : {
+            title: body.title,
+            gain: body.gain,
+            bankAccountId: body.bankAccountId,
+          },
     );
 
     if (eitherUpdateIncome.isLeft()) {

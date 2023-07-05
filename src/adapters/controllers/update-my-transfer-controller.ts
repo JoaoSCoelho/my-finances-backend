@@ -34,13 +34,20 @@ export class UpdateMyTransferController implements Adapter {
     const eitherUpdateTransfer = await this.updateUserTransferUC.execute(
       payload.userID,
       httpRequest.params.id,
-      {
-        description: body.description,
-        title: body.title,
-        amount: body.spent,
-        giverBankAccountId: body.giverBankAccountId,
-        receiverBankAccountId: body.receiverBankAccountId,
-      },
+      body.description
+        ? {
+            description: body.description,
+            title: body.title,
+            amount: body.spent,
+            giverBankAccountId: body.giverBankAccountId,
+            receiverBankAccountId: body.receiverBankAccountId,
+          }
+        : {
+            title: body.title,
+            amount: body.spent,
+            giverBankAccountId: body.giverBankAccountId,
+            receiverBankAccountId: body.receiverBankAccountId,
+          },
     );
 
     if (eitherUpdateTransfer.isLeft()) {

@@ -34,12 +34,18 @@ export class UpdateMyExpenseController implements Adapter {
     const eitherUpdateExpense = await this.updateUserExpenseUC.execute(
       payload.userID,
       httpRequest.params.id,
-      {
-        description: body.description,
-        title: body.title,
-        spent: body.spent,
-        bankAccountId: body.bankAccountId,
-      },
+      body.description
+        ? {
+            description: body.description,
+            title: body.title,
+            spent: body.spent,
+            bankAccountId: body.bankAccountId,
+          }
+        : {
+            title: body.title,
+            spent: body.spent,
+            bankAccountId: body.bankAccountId,
+          },
     );
 
     if (eitherUpdateExpense.isLeft()) {
