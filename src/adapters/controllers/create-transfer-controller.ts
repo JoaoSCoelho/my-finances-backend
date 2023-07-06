@@ -1,4 +1,5 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
+import { MissingParamError } from '../../errors/missing-param-error';
 import { ServerError } from '../../errors/server-error';
 import { AnyObject } from '../../object-values/any-object';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
@@ -30,6 +31,13 @@ export class CreateTransferController implements Adapter {
     }
 
     const { value: body } = eitherBody.value;
+
+    if (!('title' in body)) return badRequest(new MissingParamError('title'));
+    if (!('amount' in body)) return badRequest(new MissingParamError('amount'));
+    if (!('giverBankAccountId' in body))
+      return badRequest(new MissingParamError('giverBankAccountId'));
+    if (!('receiverBankAccountId' in body))
+      return badRequest(new MissingParamError('receiverBankAccountId'));
 
     const eitherTransfer = await this.createTransferUC.execute(
       {

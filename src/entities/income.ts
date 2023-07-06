@@ -53,7 +53,15 @@ export class Income {
     // Checks if there were any errors during the creation of object values
 
     if (eitherId.isLeft()) return left(eitherId.value);
-    if (eitherTitle.isLeft()) return left(eitherTitle.value);
+    if (eitherTitle.isLeft())
+      return left(
+        new InvalidParamError(
+          'title',
+          income.title,
+          eitherTitle.value.reason,
+          eitherTitle.value.expected,
+        ),
+      );
     if (eitherBankAccountId.isLeft())
       return left(
         new InvalidParamError(
