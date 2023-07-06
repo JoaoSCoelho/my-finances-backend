@@ -113,9 +113,11 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       '/api/auth/refreshtoken',
     );
 
-    expect(body).toMatchObject({
+    expect(body).toEqual({
+      code: 103,
       name: 'Missing param',
       paramName: 'refreshToken',
+      error: 'Missing param: refreshToken',
     });
 
     expect(status).toBe(400);
