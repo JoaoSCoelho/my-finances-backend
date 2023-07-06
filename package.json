@@ -6,7 +6,7 @@
   "scripts": {
     "build": "sucrase ./src -d ./dist --transforms typescript,imports",
     "start": "node dist",
-    "test:functional": "jest --projects ./tests --runInBand --bail",
+    "test:functional": "jest --projects ./tests --runInBand --bail --silent --verbose --coverage=true --coverageDirectory=\"coverage\"",
     "dev": "nodemon src/index.ts"
   },
   "keywords": [],
@@ -30,6 +30,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.3",
     "sucrase": "^3.29.0",
     "ts-node": "^10.9.1"
   },
@@ -43,6 +44,7 @@
     "@types/jsonwebtoken": "^9.0.1",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.11.18",
+    "@types/nodemailer": "^6.4.8",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
@@ -53,7 +55,7 @@
     "eslint-plugin-import-helpers": "^1.3.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-unused-imports": "^2.0.0",
-    "jest": "^29.4.3",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
     "supertest": "^6.3.3",

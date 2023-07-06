@@ -7,8 +7,7 @@ import { EncryptorProvider } from '../external/ports/encryptor-provider';
 import { UsersRepository } from '../external/ports/users-repository';
 import { Email } from '../object-values/email';
 import { Password } from '../object-values/password';
-import { left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/login';
+import { Either, left, right } from '../shared/either';
 
 export class LoginUC {
   constructor(
@@ -16,7 +15,18 @@ export class LoginUC {
     private encryptorProvider: EncryptorProvider,
   ) {}
 
-  execute: ExecuteMethod = async (possiblyEmail, possiblyPassword) => {
+  async execute(
+    possiblyEmail: any,
+    possiblyPassword: any,
+  ): Promise<
+    Either<
+      | ServerError
+      | InvalidParamError
+      | ThereIsNoEntityWithThisPropError
+      | InvalidCredentialsError,
+      User
+    >
+  > {
     const eitherEmail = Email.create(possiblyEmail);
 
     if (eitherEmail.isLeft())
@@ -66,5 +76,5 @@ export class LoginUC {
     if (!isValidPassword) return left(new InvalidCredentialsError());
 
     return right(user);
-  };
+  }
 }

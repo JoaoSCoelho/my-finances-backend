@@ -27,7 +27,10 @@ export class Amount {
       );
     if (amount > this.maximum)
       return left(
-        genError('greater than maximum', `Less or equal than ${this.maximum}`),
+        genError(
+          'greater than the maximum',
+          `Less or equal than ${this.maximum}`,
+        ),
       );
 
     return right(new Amount(amount));

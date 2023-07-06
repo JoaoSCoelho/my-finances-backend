@@ -8,6 +8,10 @@ export const expenseSchema = new Schema(
     },
     description: {
       type: String,
+      required: false,
+    },
+    title: {
+      type: String,
       required: true,
     },
     spent: {

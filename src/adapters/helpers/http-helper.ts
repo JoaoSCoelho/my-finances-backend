@@ -19,9 +19,13 @@ export const created = <Body = IHttpResponse['body']>(
   body,
 });
 
-export const badRequest = (error: Error): IHttpResponse => ({
+export const badRequest = (
+  error: Error,
+  type?: IHttpResponse['type'],
+): IHttpResponse => ({
   statusCode: 400,
   body: error,
+  type,
 });
 
 export const unauthorized = (error: Error): IHttpResponse => ({

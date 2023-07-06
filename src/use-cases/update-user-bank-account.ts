@@ -7,12 +7,21 @@ import { Amount } from '../object-values/amout';
 import { BankAccountName } from '../object-values/bank-account-name';
 import { URL } from '../object-values/url';
 import { Either, left, right } from '../shared/either';
-import { ExecuteMethod } from './ports/update-user-bank-account';
+import { ICreateBankAccountDTO } from './create-bank-account';
 
 export class UpdateUserBankAccountUC {
   constructor(private bankAccountsRepository: BankAccountsRepository) {}
 
-  execute: ExecuteMethod = async (id, userId, data) => {
+  async execute(
+    id: string,
+    userId: string,
+    data: Omit<Record<keyof ICreateBankAccountDTO, any>, 'userId'>,
+  ): Promise<
+    Either<
+      InvalidParamError | ServerError | ThereIsNoEntityWithThisPropError,
+      BankAccount
+    >
+  > {
     const eitherName = data.name
       ? BankAccountName.create(data.name)
       : undefined;
@@ -81,5 +90,5 @@ export class UpdateUserBankAccountUC {
     const bankAccount = eitherBankAccount.value;
 
     return right(bankAccount);
-  };
+  }
 }
