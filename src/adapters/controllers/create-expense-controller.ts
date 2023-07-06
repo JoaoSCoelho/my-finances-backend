@@ -1,4 +1,5 @@
 import { InvalidParamError } from '../../errors/invalid-param-error';
+import { MissingParamError } from '../../errors/missing-param-error';
 import { ServerError } from '../../errors/server-error';
 import { AnyObject } from '../../object-values/any-object';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
@@ -30,6 +31,11 @@ export class CreateExpenseController implements Adapter {
     }
 
     const { value: body } = eitherBody.value;
+
+    if (!('title' in body)) return badRequest(new MissingParamError('title'));
+    if (!('spent' in body)) return badRequest(new MissingParamError('spent'));
+    if (!('bankAccountId' in body))
+      return badRequest(new MissingParamError('bankAccountId'));
 
     const eitherExpense = await this.createExpenseUC.execute(
       {

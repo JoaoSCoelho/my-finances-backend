@@ -1,5 +1,4 @@
 import { InvalidParamError } from '../errors/invalid-param-error';
-import { Amount } from '../object-values/amout';
 import { AnyNumber } from '../object-values/any-number';
 import { AnyString } from '../object-values/any-string';
 import { ID } from '../object-values/id';
@@ -47,7 +46,7 @@ export class Income {
     const eitherDescription = income.description
       ? AnyString.create(income.description)
       : undefined;
-    const eitherGain = Amount.create(income.gain);
+    const eitherGain = NoNegativeAmount.create(income.gain);
     const eitherCreatedTimestamp = AnyNumber.create(income.createdTimestamp);
     const eitherTitle = TransactionTitle.create(income.title);
 

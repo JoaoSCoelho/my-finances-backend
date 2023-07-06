@@ -1,5 +1,4 @@
 import { InvalidParamError } from '../errors/invalid-param-error';
-import { Amount } from '../object-values/amout';
 import { AnyNumber } from '../object-values/any-number';
 import { AnyString } from '../object-values/any-string';
 import { ID } from '../object-values/id';
@@ -53,7 +52,7 @@ export class Transfer {
     const eitherDescription = transfer.description
       ? AnyString.create(transfer.description)
       : undefined;
-    const eitherAmount = Amount.create(transfer.amount);
+    const eitherAmount = NoNegativeAmount.create(transfer.amount);
     const eitherCreatedTimestamp = AnyNumber.create(transfer.createdTimestamp);
     const eitherTitle = TransactionTitle.create(transfer.title);
 

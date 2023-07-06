@@ -1,6 +1,6 @@
 import { NoPermissionsError } from '../../errors/no-permissions-error';
 import { ServerError } from '../../errors/server-error';
-import { badRequest, next, serverError } from '../helpers/http-helper';
+import { next, serverError, unauthorized } from '../helpers/http-helper';
 import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
 export class ConfirmedEmailMiddleware implements Adapter {
@@ -11,7 +11,7 @@ export class ConfirmedEmailMiddleware implements Adapter {
       return serverError(new ServerError());
 
     if (!payload.confirmedEmail)
-      return badRequest(new NoPermissionsError('CONFIRMED_EMAIL'));
+      return unauthorized(new NoPermissionsError('CONFIRMED_EMAIL'));
 
     return next();
   };
