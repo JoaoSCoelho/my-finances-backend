@@ -73,7 +73,7 @@ export class CreateTransferController implements Adapter {
     const receiverBankAccountAmount = eitherReceiverBankAccountAmount.value;
 
     return created({
-      expense: transfer.value,
+      transfer: transfer.value,
       newGiverBankAccountAmount: giverBankAccountAmount,
       newReceiverBankAccountAmount: receiverBankAccountAmount,
     });
