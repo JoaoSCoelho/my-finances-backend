@@ -1,7 +1,5 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { MissingParamError } from '../../errors/missing-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
 import { CreateAccessTokenUC } from '../../use-cases/create-access-token';
 import { CreateRefreshTokenUC } from '../../use-cases/create-refresh-token';
 import { CreateUserUC } from '../../use-cases/create-user';
@@ -18,35 +16,20 @@ export class CreateUserController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    // Validates the request body as an object
-
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
-    if (!('email' in body)) return badRequest(new MissingParamError('email'));
-    if (!('username' in body))
+    if (!('email' in httpRequest.body))
+      return badRequest(new MissingParamError('email'));
+    if (!('username' in httpRequest.body))
       return badRequest(new MissingParamError('username'));
-    if (!('password' in body))
+    if (!('password' in httpRequest.body))
       return badRequest(new MissingParamError('password'));
 
     // Create an user in the database
 
     const eitherUser = await this.createUser.execute({
-      email: body.email,
-      password: body.password,
-      username: body.username,
-      profileImageURL: body.profileImageURL,
+      email: httpRequest.body.email,
+      password: httpRequest.body.password,
+      username: httpRequest.body.username,
+      profileImageURL: httpRequest.body.profileImageURL,
     });
 
     if (eitherUser.isLeft()) return badRequest(eitherUser.value);

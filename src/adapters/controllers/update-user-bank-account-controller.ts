@@ -1,5 +1,3 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
-import { AnyObject } from '../../object-values/any-object';
 import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserBankAccountUC } from '../../use-cases/update-user-bank-account';
@@ -13,20 +11,6 @@ export class UpdateUserBankAccountController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
     const eitherId = ID.create(httpRequest.params.id);
 
     if (eitherId.isLeft()) return badRequest(eitherId.value);
@@ -39,9 +23,9 @@ export class UpdateUserBankAccountController implements Adapter {
       id,
       userID,
       {
-        amount: body.amount,
-        imageURL: body.imageURL,
-        name: body.name,
+        amount: httpRequest.body.amount,
+        imageURL: httpRequest.body.imageURL,
+        name: httpRequest.body.name,
       },
     );
 

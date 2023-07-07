@@ -1,6 +1,4 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserIncomeUC } from '../../use-cases/update-user-income';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
@@ -17,34 +15,20 @@ export class UpdateMyIncomeController implements Adapter {
 
     if (!('userID' in payload)) return serverError(new ServerError());
 
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
     const eitherUpdateIncome = await this.updateUserIncomeUC.execute(
       payload.userID,
       httpRequest.params.id,
-      body.description
+      httpRequest.body.description
         ? {
-            description: body.description,
-            title: body.title,
-            gain: body.gain,
-            bankAccountId: body.bankAccountId,
+            description: httpRequest.body.description,
+            title: httpRequest.body.title,
+            gain: httpRequest.body.gain,
+            bankAccountId: httpRequest.body.bankAccountId,
           }
         : {
-            title: body.title,
-            gain: body.gain,
-            bankAccountId: body.bankAccountId,
+            title: httpRequest.body.title,
+            gain: httpRequest.body.gain,
+            bankAccountId: httpRequest.body.bankAccountId,
           },
     );
 

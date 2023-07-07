@@ -1,7 +1,5 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { MissingParamError } from '../../errors/missing-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { CreateIncomeUC } from '../../use-cases/create-income';
 import { badRequest, created, serverError } from '../helpers/http-helper';
@@ -18,31 +16,19 @@ export class CreateIncomeController implements Adapter {
 
     if (!('userID' in payload)) return serverError(new ServerError());
 
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
-    if (!('title' in body)) return badRequest(new MissingParamError('title'));
-    if (!('gain' in body)) return badRequest(new MissingParamError('gain'));
-    if (!('bankAccountId' in body))
+    if (!('title' in httpRequest.body))
+      return badRequest(new MissingParamError('title'));
+    if (!('gain' in httpRequest.body))
+      return badRequest(new MissingParamError('gain'));
+    if (!('bankAccountId' in httpRequest.body))
       return badRequest(new MissingParamError('bankAccountId'));
 
     const eitherIncome = await this.createIncomeUC.execute(
       {
-        bankAccountId: body.bankAccountId,
-        description: body.description,
-        gain: body.gain,
-        title: body.title,
+        bankAccountId: httpRequest.body.bankAccountId,
+        description: httpRequest.body.description,
+        gain: httpRequest.body.gain,
+        title: httpRequest.body.title,
       },
       payload.userID,
     );
@@ -52,7 +38,9 @@ export class CreateIncomeController implements Adapter {
     const income = eitherIncome.value;
 
     const eitherBankAccountAmount =
-      await this.calculateBankAccountAmountUC.execute(body.bankAccountId);
+      await this.calculateBankAccountAmountUC.execute(
+        httpRequest.body.bankAccountId,
+      );
 
     if (eitherBankAccountAmount.isLeft()) return serverError(new ServerError());
 
