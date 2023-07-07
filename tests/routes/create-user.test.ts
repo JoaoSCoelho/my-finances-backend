@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 
@@ -251,6 +252,31 @@ describe('Rota de criação de usuário', () => {
       code: 100,
       paramName: 'password',
       param: { pass: 'mysecure@password2023' },
+      reason: 'type not supported',
+      expected: 'string',
+    });
+  });
+
+  test('Deve retornar um erro pelo profileImageURL ter um tipo inválido', async () => {
+    const requestData = {
+      username: '546',
+      email: faker.internet.email(),
+      password: 'mysecure@password2023',
+      profileImageURL: 444,
+    };
+
+    const { body, status } = await supertest(app)
+      .post('/api/users')
+      .send(requestData);
+
+    expect(status).toBe(400);
+
+    expect(body).toEqual({
+      error: `The profileImageURL "${requestData.profileImageURL}" is invalid: type not supported. Expected: string`,
+      name: 'Invalid param',
+      code: 100,
+      paramName: 'profileImageURL',
+      param: requestData.profileImageURL,
       reason: 'type not supported',
       expected: 'string',
     });
@@ -546,6 +572,31 @@ describe('Rota de criação de usuário', () => {
       param: requestData.password,
       reason: 'incorrect structure',
       expected: 'At least one number',
+    });
+  });
+
+  test('Deve retornar um erro pelo profileImageURL não atender à estrutura de uma URL', async () => {
+    const requestData = {
+      username: 'username',
+      email: faker.internet.email(),
+      password: 'mysecure@password2023',
+      profileImageURL: 'imagens/imagem/254.png',
+    };
+
+    const { body, status } = await supertest(app)
+      .post('/api/users')
+      .send(requestData);
+
+    expect(status).toBe(400);
+
+    expect(body).toEqual({
+      error: `The profileImageURL "${requestData.profileImageURL}" is invalid: incorrect structure. Expected: A valid web URL`,
+      name: 'Invalid param',
+      code: 100,
+      paramName: 'profileImageURL',
+      param: requestData.profileImageURL,
+      reason: 'incorrect structure',
+      expected: 'A valid web URL',
     });
   });
 });
