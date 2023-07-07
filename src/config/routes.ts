@@ -32,7 +32,11 @@ const router = Router();
 
 router.post('/api/login', adaptRoute(makeLoginController()));
 router.post('/api/users', adaptRoute(makeCreateUserController()));
-router.post('/api/auth/refreshtoken', adaptRoute(makeRefreshTokenController()));
+router.post(
+  '/api/auth/refreshtoken',
+  limiter({ max: 1, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
+  adaptRoute(makeRefreshTokenController()),
+);
 
 router.get(
   '/api/users/me',
@@ -41,7 +45,7 @@ router.get(
 );
 router.post(
   '/api/users/me/resend/emailconfirmation',
-  limiter({ max: 1, windowMs: 1000 * 60 * 15 }),
+  limiter({ max: 1, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeResendEmailConfirmation()),
 );
