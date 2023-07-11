@@ -1,4 +1,5 @@
 import { ServerError } from '../../errors/server-error';
+import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserExpenseUC } from '../../use-cases/update-user-expense';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
@@ -15,21 +16,21 @@ export class UpdateMyExpenseController implements Adapter {
 
     if (!('userID' in payload)) return serverError(new ServerError());
 
+    const eitherId = ID.create(httpRequest.params.id);
+
+    if (eitherId.isLeft()) return badRequest(eitherId.value);
+
+    const { value: id } = eitherId.value;
+
     const eitherUpdateExpense = await this.updateUserExpenseUC.execute(
       payload.userID,
-      httpRequest.params.id,
-      httpRequest.body.description
-        ? {
-            description: httpRequest.body.description,
-            title: httpRequest.body.title,
-            spent: httpRequest.body.spent,
-            bankAccountId: httpRequest.body.bankAccountId,
-          }
-        : {
-            title: httpRequest.body.title,
-            spent: httpRequest.body.spent,
-            bankAccountId: httpRequest.body.bankAccountId,
-          },
+      id,
+      {
+        description: httpRequest.body.description,
+        title: httpRequest.body.title,
+        spent: httpRequest.body.spent,
+        bankAccountId: httpRequest.body.bankAccountId,
+      },
     );
 
     if (eitherUpdateExpense.isLeft()) {

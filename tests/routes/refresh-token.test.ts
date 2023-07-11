@@ -226,7 +226,16 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       confirmedEmail: false,
     };
 
-    const refreshToken = 64;
+    const refreshToken = [
+      jwt.sign(
+        {
+          type: 'refresh',
+          userID: userCredentials.id,
+        },
+        apiEnv.JWT_SECRET,
+        { expiresIn: '1s' },
+      ),
+    ];
 
     UserModel.create({
       ...userCredentials,
@@ -235,7 +244,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
         userCredentials.password,
         config.default_encryptor_salts,
       ),
-      refreshTokens: [refreshToken],
+      refreshTokens: [refreshToken.toString()],
     });
 
     const { body, status } = await new Promise<any>((resolve) =>

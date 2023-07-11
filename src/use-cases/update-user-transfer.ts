@@ -1,4 +1,5 @@
 import { ITransferObject, Transfer } from '../entities/transfer';
+import { ImpossibleCombinationError } from '../errors/impossible-combination-error';
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { ServerError } from '../errors/server-error';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
@@ -21,7 +22,7 @@ export class UpdateUserTransferUC {
     transferID: string,
     data: Partial<
       Pick<
-        ITransferObject,
+        Record<keyof ITransferObject, any>,
         | 'amount'
         | 'description'
         | 'title'
@@ -31,43 +32,16 @@ export class UpdateUserTransferUC {
     >,
   ): Promise<
     Either<
-      ThereIsNoEntityWithThisPropError | InvalidParamError | ServerError,
+      | ThereIsNoEntityWithThisPropError
+      | InvalidParamError
+      | ServerError
+      | ImpossibleCombinationError,
       Transfer
     >
   > {
-    const eitherTransferObject =
-      await this.transfersRepository.findWithThisProps({ id: transferID });
-
-    if (eitherTransferObject.isLeft())
-      return left(
-        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
-      );
-
-    const transferObject = eitherTransferObject.value;
-
-    const existsGiverBankAccount = await this.bankAccountsRepository.exists({
-      id: transferObject.giverBankAccountId,
-      userId: userID,
-    });
-
-    if (!existsGiverBankAccount)
-      return left(
-        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
-      );
-
-    const existsReceiverBankAccount = await this.bankAccountsRepository.exists({
-      id: transferObject.receiverBankAccountId,
-      userId: userID,
-    });
-
-    if (!existsReceiverBankAccount)
-      return left(
-        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
-      );
-
     const eitherAmount = NoNegativeAmount.create(data.amount);
 
-    if ('amount' in data && eitherAmount.isLeft())
+    if (data.amount !== undefined && eitherAmount.isLeft())
       return left(
         new InvalidParamError(
           'amount',
@@ -79,7 +53,7 @@ export class UpdateUserTransferUC {
 
     const eitherTitle = TransactionTitle.create(data.title);
 
-    if ('title' in data && eitherTitle.isLeft())
+    if (data.title !== undefined && eitherTitle.isLeft())
       return left(
         new InvalidParamError(
           'title',
@@ -91,7 +65,7 @@ export class UpdateUserTransferUC {
 
     const eitherDescription = AnyString.create(data.description);
 
-    if ('description' in data && eitherDescription.isLeft())
+    if (data.description != undefined && eitherDescription.isLeft())
       return left(
         new InvalidParamError(
           'description',
@@ -101,9 +75,21 @@ export class UpdateUserTransferUC {
         ),
       );
 
+    if (
+      data.giverBankAccountId &&
+      data.receiverBankAccountId &&
+      data.giverBankAccountId === data.receiverBankAccountId
+    )
+      return left(
+        new ImpossibleCombinationError(
+          `giverBankAccountId: ${data.giverBankAccountId}`,
+          `receiverBankAccountId: ${data.receiverBankAccountId}`,
+        ),
+      );
+
     const eitherGiverBankAccountId = ID.create(data.giverBankAccountId);
 
-    if ('giverBankAccountId' in data) {
+    if (data.giverBankAccountId !== undefined) {
       if (eitherGiverBankAccountId.isLeft())
         return left(
           new InvalidParamError(
@@ -132,7 +118,7 @@ export class UpdateUserTransferUC {
 
     const eitherReceiverBankAccountId = ID.create(data.receiverBankAccountId);
 
-    if ('receiverBankAccountId' in data) {
+    if (data.receiverBankAccountId !== undefined) {
       if (eitherReceiverBankAccountId.isLeft())
         return left(
           new InvalidParamError(
@@ -159,14 +145,79 @@ export class UpdateUserTransferUC {
       }
     }
 
+    const eitherTransferObject =
+      await this.transfersRepository.findWithThisProps({ id: transferID });
+
+    if (eitherTransferObject.isLeft())
+      return left(
+        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
+      );
+
+    const transferObject = eitherTransferObject.value;
+
+    if (data.giverBankAccountId === transferObject.receiverBankAccountId)
+      return left(
+        new ImpossibleCombinationError(
+          `giverBankAccountId: ${data.giverBankAccountId}`,
+          `receiverBankAccountId: ${transferObject.receiverBankAccountId}`,
+        ),
+      );
+
+    if (data.receiverBankAccountId === transferObject.giverBankAccountId)
+      return left(
+        new ImpossibleCombinationError(
+          `giverBankAccountId: ${transferObject.giverBankAccountId}`,
+          `receiverBankAccountId: ${data.receiverBankAccountId}`,
+        ),
+      );
+
+    const existsGiverBankAccount = await this.bankAccountsRepository.exists({
+      id: transferObject.giverBankAccountId,
+      userId: userID,
+    });
+
+    if (!existsGiverBankAccount)
+      return left(
+        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
+      );
+
+    const existsReceiverBankAccount = await this.bankAccountsRepository.exists({
+      id: transferObject.receiverBankAccountId,
+      userId: userID,
+    });
+
+    if (!existsReceiverBankAccount)
+      return left(
+        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
+      );
+
     const eitherUpdatedTransferObject = await this.transfersRepository.update(
       transferID,
-      data,
+      {
+        ...data,
+        description:
+          data.description == undefined ? undefined : data.description,
+      },
     );
 
-    if (eitherUpdatedTransferObject.isLeft()) return left(new ServerError());
+    if (eitherUpdatedTransferObject.isLeft())
+      return left(
+        new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
+      );
 
-    const updatedTransferObject = eitherUpdatedTransferObject.value;
+    let updatedTransferObject = eitherUpdatedTransferObject.value;
+
+    if (data.description === null) {
+      const eitherRemovedPropTransferObject =
+        await this.transfersRepository.deleteProps(transferID, ['description']);
+
+      if (eitherRemovedPropTransferObject.isLeft())
+        return left(
+          new ThereIsNoEntityWithThisPropError('transfer', 'id', transferID),
+        );
+
+      updatedTransferObject = eitherRemovedPropTransferObject.value;
+    }
 
     const eitherTransfer = Transfer.create(updatedTransferObject);
 

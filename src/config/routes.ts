@@ -23,10 +23,10 @@ import { makeMyBankAccountsController } from '../factories/my-bank-accounts-cont
 import { makeRefreshTokenController } from '../factories/refresh-token-controller';
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
 import { makeUpdateMeController } from '../factories/update-me-controller';
+import { makeUpdateMyBankAccountController } from '../factories/update-my-bank-account-controller';
 import { makeUpdateMyExpenseController } from '../factories/update-my-expense-controller';
 import { makeUpdateMyIncomeController } from '../factories/update-my-income-controller';
 import { makeUpdateMyTransferController } from '../factories/update-my-transfer-controller';
-import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
 const router = Router();
 
@@ -72,7 +72,7 @@ router.get(
 router.put(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
-  adaptRoute(makeUpdateUserBankAccountController()),
+  adaptRoute(makeUpdateMyBankAccountController()),
 );
 router.delete(
   '/api/bankaccounts/:id',

@@ -96,6 +96,10 @@ describe('Rota de criação de usuário', () => {
     });
   }, 10000);
 
+  test('Deve criar um usuário sem as propriedades extras passadas no body da requisição', async () => {});
+
+  test('Deve criar um usuário e repassar o email todo para minúsculo', async () => {});
+
   test('Deve retornar um erro por já possuir um usuário com o mesmo email', async () => {
     const requestData = {
       username: 'nome de usuário',
@@ -121,6 +125,8 @@ describe('Rota de criação de usuário', () => {
       name: 'There is already entity with this prop',
     });
   });
+
+  test('Deve retornar um erro por já possuir um usuário com o mesmo email em lowerCase', async () => {});
 
   test('Deve retornar um erro por falta do username', async () => {
     const requestData = {

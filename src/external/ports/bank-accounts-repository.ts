@@ -37,6 +37,10 @@ export type FindWithThisPropsMethod = <
 >(
   filter: Partial<Record<K, V>>,
 ) => Promise<Either<null, IBankAccountObject>>;
+export type DeletePropsMethod = <K extends keyof IBankAccountObject>(
+  id: string,
+  propsNames: K[],
+) => Promise<Either<null, IBankAccountObject>>;
 
 export type BankAccountsRepository = {
   set: SetMethod;
@@ -47,4 +51,5 @@ export type BankAccountsRepository = {
   existsWithThisID: ExistsWithThisIDMethod;
   exists: ExistsMethod;
   findWithThisProps: FindWithThisPropsMethod;
+  deleteProps: DeletePropsMethod;
 };

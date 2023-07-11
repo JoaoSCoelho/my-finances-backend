@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   DeleteMethod,
+  DeletePropsMethod,
   ExpensesRepository,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
@@ -68,5 +69,28 @@ export class MongoExpenses implements ExpensesRepository {
     await ExpenseModel.findOneAndDelete({ id: id });
 
     return;
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbExpense = await ExpenseModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbExpense) return left(null);
+
+    const eitherExpense = Expense.create(dbExpense);
+
+    if (eitherExpense.isLeft()) throw new ServerError();
+
+    const expense = eitherExpense.value;
+
+    return right(expense.value);
   };
 }

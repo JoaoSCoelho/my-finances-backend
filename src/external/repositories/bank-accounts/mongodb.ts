@@ -4,6 +4,7 @@ import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
   DeleteMethod,
+  DeletePropsMethod,
   ExistsMethod,
   ExistsWithThisIDMethod,
   FilterEqualMethod,
@@ -85,6 +86,29 @@ export class MongoBankAccounts implements BankAccountsRepository {
     await BankAccountModel.findOneAndDelete({ id: id });
 
     return;
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbBankAccount = await BankAccountModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbBankAccount) return left(null);
+
+    const eitherBankAccount = BankAccount.create(dbBankAccount);
+
+    if (eitherBankAccount.isLeft()) throw new ServerError();
+
+    const bankAccount = eitherBankAccount.value;
+
+    return right(bankAccount.value);
   };
 
   existsWithThisID: ExistsWithThisIDMethod = async (bankAccountId) => {

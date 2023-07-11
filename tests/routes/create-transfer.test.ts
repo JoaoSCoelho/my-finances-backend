@@ -178,6 +178,8 @@ describe('Rota de criação de uma transferência', () => {
     expect(dbTransfer).toMatchObject(body.transfer);
   }, 15000);
 
+  test('Deve criar uma nova transferência sem as propriedades extras passadas no body da requisição', async () => {});
+
   test('Deve retornar um erro por não ter o email confirmado', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
@@ -1087,6 +1089,7 @@ describe('Rota de criação de uma transferência', () => {
 
     expect(status).toBe(400);
   });
+
   test('Deve retornar um erro pelo receiverBankAccountId ser do tipo errado', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
@@ -1575,4 +1578,6 @@ describe('Rota de criação de uma transferência', () => {
 
     expect(status).toBe(400);
   });
+
+  test('Deve retornar um erro pelo giverBankAccountId ser igual ao receiverBankAccountId', async () => {});
 });

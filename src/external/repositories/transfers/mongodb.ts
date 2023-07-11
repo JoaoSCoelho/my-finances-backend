@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   DeleteMethod,
+  DeletePropsMethod,
   FilterWithThisPossibilitiesMethod,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
@@ -87,5 +88,28 @@ export class MongoTransfers implements TransfersRepository {
     await TransferModel.findOneAndDelete({ id: id });
 
     return;
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbTransfer = await TransferModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbTransfer) return left(null);
+
+    const eitherTransfer = Transfer.create(dbTransfer);
+
+    if (eitherTransfer.isLeft()) throw new ServerError();
+
+    const transfer = eitherTransfer.value;
+
+    return right(transfer.value);
   };
 }

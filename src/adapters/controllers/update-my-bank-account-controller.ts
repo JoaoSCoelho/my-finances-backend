@@ -1,10 +1,11 @@
+import { ServerError } from '../../errors/server-error';
 import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserBankAccountUC } from '../../use-cases/update-user-bank-account';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
 import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
-export class UpdateUserBankAccountController implements Adapter {
+export class UpdateMyBankAccountController implements Adapter {
   constructor(
     private updateUserBankAccountUC: UpdateUserBankAccountUC,
     private calculateBankAccountAmountUC: CalculateBankAccountAmountUC,
@@ -17,11 +18,14 @@ export class UpdateUserBankAccountController implements Adapter {
 
     const { value: id } = eitherId.value;
 
-    const userID: string = httpRequest.nextData!.auth.userID;
+    const payload = httpRequest.nextData?.auth;
+
+    if (!payload || !('userID' in payload))
+      return serverError(new ServerError());
 
     const eitherBankAccount = await this.updateUserBankAccountUC.execute(
       id,
-      userID,
+      payload.userID,
       {
         amount: httpRequest.body.amount,
         imageURL: httpRequest.body.imageURL,

@@ -28,6 +28,10 @@ export type UpdateMethod = <
   updateObject: Partial<Record<K, V>>,
 ) => Promise<Either<null, ITransferObject>>;
 export type DeleteMethod = (id: string) => Promise<void>;
+export type DeletePropsMethod = <K extends keyof ITransferObject>(
+  id: string,
+  propsNames: K[],
+) => Promise<Either<null, ITransferObject>>;
 
 export type TransfersRepository = {
   set: SetMethod;
@@ -36,4 +40,5 @@ export type TransfersRepository = {
   findWithThisProps: FindWithThisPropsMethod;
   update: UpdateMethod;
   delete: DeleteMethod;
+  deleteProps: DeletePropsMethod;
 };

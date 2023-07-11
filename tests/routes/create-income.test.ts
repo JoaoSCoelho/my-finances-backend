@@ -152,6 +152,8 @@ describe('Rota de criação de uma receita', () => {
     expect(dbIncome).toMatchObject(body.income);
   }, 15000);
 
+  test('Deve criar uma nova receita sem as propriedades extras passadas no body da requisição', async () => {});
+
   test('Deve retornar um erro por não ter o email confirmado', async () => {
     const userCredentials = {
       username: 'Nome de usuario',

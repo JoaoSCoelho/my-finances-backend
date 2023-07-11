@@ -38,9 +38,16 @@ export type PushItemToPropMethod = <
   key: K,
   value: ArrElement<A>,
 ) => Promise<Either<null, IUserObject>>;
-export type UpdateMethod = <K extends keyof IUserObject>(
+export type UpdateMethod = <
+  K extends Exclude<keyof IUserObject, 'id'>,
+  V extends IUserObject[K],
+>(
   userID: string,
-  data: Record<K, IUserObject[K]>,
+  data: Partial<Record<K, V>>,
+) => Promise<Either<null, IUserObject>>;
+export type DeletePropsMethod = <K extends keyof IUserObject>(
+  id: string,
+  propsNames: K[],
 ) => Promise<Either<null, IUserObject>>;
 
 export type UsersRepository = {
@@ -54,4 +61,5 @@ export type UsersRepository = {
   getByEmail: GetByEmailMethod;
   pushItemToProp: PushItemToPropMethod;
   update: UpdateMethod;
+  deleteProps: DeletePropsMethod;
 };

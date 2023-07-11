@@ -12,10 +12,11 @@ export class UpdateMeController implements Adapter {
     if (!payload || !('userID' in payload))
       return serverError(new ServerError());
 
-    const eitherUpdatedUser = await this.updateUserUC.execute(
-      payload.userID,
-      httpRequest.body,
-    );
+    const eitherUpdatedUser = await this.updateUserUC.execute(payload.userID, {
+      email: httpRequest.body.email,
+      profileImageURL: httpRequest.body.profileImageURL,
+      username: httpRequest.body.username,
+    });
 
     if (eitherUpdatedUser.isLeft()) {
       if (eitherUpdatedUser.value.name === 'Server error')

@@ -1,4 +1,5 @@
 import { ServerError } from '../../errors/server-error';
+import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserTransferUC } from '../../use-cases/update-user-transfer';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
@@ -15,23 +16,22 @@ export class UpdateMyTransferController implements Adapter {
 
     if (!('userID' in payload)) return serverError(new ServerError());
 
+    const eitherId = ID.create(httpRequest.params.id);
+
+    if (eitherId.isLeft()) return badRequest(eitherId.value);
+
+    const { value: id } = eitherId.value;
+
     const eitherUpdateTransfer = await this.updateUserTransferUC.execute(
       payload.userID,
-      httpRequest.params.id,
-      httpRequest.body.description
-        ? {
-            description: httpRequest.body.description,
-            title: httpRequest.body.title,
-            amount: httpRequest.body.amount,
-            giverBankAccountId: httpRequest.body.giverBankAccountId,
-            receiverBankAccountId: httpRequest.body.receiverBankAccountId,
-          }
-        : {
-            title: httpRequest.body.title,
-            amount: httpRequest.body.amount,
-            giverBankAccountId: httpRequest.body.giverBankAccountId,
-            receiverBankAccountId: httpRequest.body.receiverBankAccountId,
-          },
+      id,
+      {
+        description: httpRequest.body.description,
+        title: httpRequest.body.title,
+        amount: httpRequest.body.amount,
+        giverBankAccountId: httpRequest.body.giverBankAccountId,
+        receiverBankAccountId: httpRequest.body.receiverBankAccountId,
+      },
     );
 
     if (eitherUpdateTransfer.isLeft()) {
