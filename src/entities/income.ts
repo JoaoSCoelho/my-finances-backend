@@ -1,8 +1,8 @@
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { AnyNumber } from '../object-values/any-number';
-import { AnyString } from '../object-values/any-string';
 import { ID } from '../object-values/id';
 import { NoNegativeAmount } from '../object-values/no-negative-amount';
+import { TransactionDescription } from '../object-values/transaction-description';
 import { TransactionTitle } from '../object-values/transaction-title';
 import { Either, left, right } from '../shared/either';
 
@@ -22,7 +22,7 @@ export class Income {
     public readonly title: TransactionTitle,
     public readonly gain: NoNegativeAmount,
     public readonly createdTimestamp: AnyNumber,
-    public readonly description?: AnyString,
+    public readonly description?: TransactionDescription,
   ) {
     Object.freeze(this);
   }
@@ -44,7 +44,7 @@ export class Income {
     const eitherId = ID.create(income.id);
     const eitherBankAccountId = ID.create(income.bankAccountId);
     const eitherDescription = income.description
-      ? AnyString.create(income.description)
+      ? TransactionDescription.create(income.description)
       : undefined;
     const eitherGain = NoNegativeAmount.create(income.gain);
     const eitherCreatedTimestamp = AnyNumber.create(income.createdTimestamp);
