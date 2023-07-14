@@ -95,7 +95,7 @@ export class MongoTransfers implements TransfersRepository {
       { id },
       {
         $unset: propsNames.reduce(
-          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          (prev, curr) => ({ ...prev, [curr]: '' }),
           {},
         ),
       },

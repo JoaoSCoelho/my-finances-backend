@@ -74,7 +74,7 @@ export class MongoIncomes implements IncomesRepository {
       { id },
       {
         $unset: propsNames.reduce(
-          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          (prev, curr) => ({ ...prev, [curr]: '' }),
           {},
         ),
       },

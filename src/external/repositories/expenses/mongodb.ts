@@ -76,7 +76,7 @@ export class MongoExpenses implements ExpensesRepository {
       { id },
       {
         $unset: propsNames.reduce(
-          (prev, curr) => ({ ...prev, [curr]: undefined }),
+          (prev, curr) => ({ ...prev, [curr]: '' }),
           {},
         ),
       },
