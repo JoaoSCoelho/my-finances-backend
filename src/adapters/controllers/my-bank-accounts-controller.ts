@@ -1,3 +1,4 @@
+import { ServerError } from '../../errors/server-error';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { GetUserBankAccountsUC } from '../../use-cases/get-user-bank-accounts';
 import { ok, serverError } from '../helpers/http-helper';
@@ -10,8 +11,12 @@ export class MyBankAccountsController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
+    const payload = httpRequest.nextData?.auth;
+
+    if (!('userID' in payload)) return serverError(new ServerError());
+
     const eitherBankAccounts = await this.getUserBankAccountsUC.execute(
-      httpRequest.nextData!.auth.userID,
+      payload.userID,
     );
 
     if (eitherBankAccounts.isLeft())
