@@ -17,7 +17,7 @@ export class UpdateUserBankAccountUC {
     data: Partial<
       Pick<
         Record<keyof IBankAccountObject, any>,
-        'amount' | 'imageURL' | 'name'
+        'initialAmount' | 'imageURL' | 'name'
       >
     >,
   ): Promise<
@@ -31,10 +31,17 @@ export class UpdateUserBankAccountUC {
     if (data.name !== undefined && eitherName.isLeft())
       return left(eitherName.value);
 
-    const eitherAmount = Amount.create(data.amount);
+    const eitherInitialAmount = Amount.create(data.initialAmount);
 
-    if (data.amount !== undefined && eitherAmount.isLeft())
-      return left(eitherAmount.value);
+    if (data.initialAmount !== undefined && eitherInitialAmount.isLeft())
+      return left(
+        new InvalidParamError(
+          'initialAmount',
+          data.initialAmount,
+          eitherInitialAmount.value.reason,
+          eitherInitialAmount.value.expected,
+        ),
+      );
 
     const eitherImageURL = URL.create(data.imageURL);
 
@@ -65,7 +72,7 @@ export class UpdateUserBankAccountUC {
       await this.bankAccountsRepository.update(id, {
         name: data.name,
         imageURL: data.imageURL == undefined ? undefined : data.imageURL,
-        amount: data.amount,
+        initialAmount: data.initialAmount,
       });
 
     if (eitherUpdatedBankAccountObject.isLeft())

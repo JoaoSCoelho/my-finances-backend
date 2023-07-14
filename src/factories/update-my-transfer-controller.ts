@@ -15,7 +15,7 @@ export function makeUpdateMyTransferController() {
     transfersRepository,
     bankAccountsRepository,
   );
-  const calculateBankAccountAmoutUC = new CalculateBankAccountAmountUC(
+  const calculateBankAccountAmountUC = new CalculateBankAccountAmountUC(
     bankAccountsRepository,
     incomesRepository,
     expensesRepository,
@@ -23,7 +23,7 @@ export function makeUpdateMyTransferController() {
   );
   const updateMyTransferController = new UpdateMyTransferController(
     updateUserTransferUC,
-    calculateBankAccountAmoutUC,
+    calculateBankAccountAmountUC,
   );
 
   return updateMyTransferController;

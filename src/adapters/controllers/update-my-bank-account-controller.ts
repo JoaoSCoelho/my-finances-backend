@@ -27,7 +27,7 @@ export class UpdateMyBankAccountController implements Adapter {
       id,
       payload.userID,
       {
-        amount: httpRequest.body.amount,
+        initialAmount: httpRequest.body.initialAmount,
         imageURL: httpRequest.body.imageURL,
         name: httpRequest.body.name,
       },

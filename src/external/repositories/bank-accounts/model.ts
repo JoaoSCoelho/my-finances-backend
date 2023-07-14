@@ -14,7 +14,7 @@ export const bankAccountSchema = new Schema(
       type: String,
       required: true,
     },
-    amount: {
+    initialAmount: {
       type: Number,
       required: true,
     },

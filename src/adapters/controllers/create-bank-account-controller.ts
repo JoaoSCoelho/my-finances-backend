@@ -8,7 +8,7 @@ export class CreateBankAccountController implements Adapter {
   handle: AdapterHandleMethod = async (httpRequest) => {
     const eitherBankAccount = await this.createBankAccountUC.execute({
       name: httpRequest.body.name,
-      amount: httpRequest.body.amount,
+      initialAmount: httpRequest.body.initialAmount,
       userId: httpRequest.nextData?.auth.userID,
       imageURL: httpRequest.body.imageURL,
     });

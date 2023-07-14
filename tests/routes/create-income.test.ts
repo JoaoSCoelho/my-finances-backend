@@ -34,7 +34,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -78,7 +78,7 @@ describe('Rota de criação de uma receita', () => {
         id: expect.any(String),
         createdTimestamp: expect.any(Number),
       },
-      newBankAccountAmount: bankAccountData.amount + incomeData.gain,
+      newBankAccountAmount: bankAccountData.initialAmount + incomeData.gain,
     });
 
     expect(status).toBe(201);
@@ -99,7 +99,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000.5,
+      initialAmount: 2000.5,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco 2',
@@ -142,7 +142,7 @@ describe('Rota de criação de uma receita', () => {
         id: expect.any(String),
         createdTimestamp: expect.any(Number),
       },
-      newBankAccountAmount: bankAccountData.amount + incomeData.gain,
+      newBankAccountAmount: bankAccountData.initialAmount + incomeData.gain,
     });
 
     expect(status).toBe(201);
@@ -165,7 +165,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000.5,
+      initialAmount: 2000.5,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco 2',
@@ -221,7 +221,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -277,7 +277,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -381,7 +381,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -441,7 +441,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -501,7 +501,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -561,7 +561,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -622,7 +622,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -682,7 +682,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -742,7 +742,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -802,7 +802,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -862,7 +862,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -974,7 +974,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1042,7 +1042,7 @@ describe('Rota de criação de uma receita', () => {
     };
 
     const bankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',

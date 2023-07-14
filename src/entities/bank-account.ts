@@ -11,7 +11,7 @@ export interface IBankAccountObject {
   userId: string;
   createdTimestamp: number;
   name: string;
-  amount: number;
+  initialAmount: number;
   imageURL?: string;
 }
 
@@ -21,7 +21,7 @@ export class BankAccount {
     public readonly userId: ID,
     public readonly createdTimestamp: AnyNumber,
     public readonly name: BankAccountName,
-    public readonly amount: Amount,
+    public readonly initialAmount: Amount,
     public readonly imageURL?: URL,
   ) {
     Object.freeze(this);
@@ -33,7 +33,7 @@ export class BankAccount {
       userId: this.userId.value,
       createdTimestamp: this.createdTimestamp.value,
       name: this.name.value,
-      amount: this.amount.value,
+      initialAmount: this.initialAmount.value,
       imageURL: this.imageURL?.value,
     };
   }
@@ -47,7 +47,7 @@ export class BankAccount {
       bankAccount.createdTimestamp,
     );
     const eitherName = BankAccountName.create(bankAccount.name);
-    const eitherAmount = Amount.create(bankAccount.amount);
+    const eitherInitialAmount = Amount.create(bankAccount.initialAmount);
     const eitherImageURL = bankAccount.imageURL
       ? URL.create(bankAccount.imageURL)
       : undefined;
@@ -57,7 +57,15 @@ export class BankAccount {
     if (eitherId.isLeft()) return left(eitherId.value);
 
     if (eitherName.isLeft()) return left(eitherName.value);
-    if (eitherAmount.isLeft()) return left(eitherAmount.value);
+    if (eitherInitialAmount.isLeft())
+      return left(
+        new InvalidParamError(
+          'initialAmount',
+          bankAccount.initialAmount,
+          eitherInitialAmount.value.reason,
+          eitherInitialAmount.value.expected,
+        ),
+      );
 
     if (eitherUserId.isLeft())
       return left(
@@ -91,13 +99,20 @@ export class BankAccount {
     const userId = eitherUserId.value;
     const createdTimestamp = eitherCreatedTimestamp.value;
     const name = eitherName.value;
-    const amount = eitherAmount.value;
+    const initialAmount = eitherInitialAmount.value;
     const imageURL = eitherImageURL?.value;
 
     // Returns a new BankAccount entity
 
     return right(
-      new BankAccount(id, userId, createdTimestamp, name, amount, imageURL),
+      new BankAccount(
+        id,
+        userId,
+        createdTimestamp,
+        name,
+        initialAmount,
+        imageURL,
+      ),
     );
   }
 }

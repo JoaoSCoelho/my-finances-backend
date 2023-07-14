@@ -34,7 +34,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -42,7 +42,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -89,9 +89,9 @@ describe('Rota de criação de uma transferência', () => {
         createdTimestamp: expect.any(Number),
       },
       newGiverBankAccountAmount:
-        giverBankAccountData.amount - transferData.amount,
+        giverBankAccountData.initialAmount - transferData.amount,
       newReceiverBankAccountAmount:
-        receiverBankAccountData.amount + transferData.amount,
+        receiverBankAccountData.initialAmount + transferData.amount,
     });
 
     expect(status).toBe(201);
@@ -112,7 +112,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -120,7 +120,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -166,9 +166,9 @@ describe('Rota de criação de uma transferência', () => {
         createdTimestamp: expect.any(Number),
       },
       newGiverBankAccountAmount:
-        giverBankAccountData.amount - transferData.amount,
+        giverBankAccountData.initialAmount - transferData.amount,
       newReceiverBankAccountAmount:
-        receiverBankAccountData.amount + transferData.amount,
+        receiverBankAccountData.initialAmount + transferData.amount,
     });
 
     expect(status).toBe(201);
@@ -191,7 +191,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -199,7 +199,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -256,7 +256,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -264,7 +264,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -320,7 +320,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -328,7 +328,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -384,7 +384,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -440,7 +440,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -496,7 +496,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -504,7 +504,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -564,7 +564,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -572,7 +572,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -632,7 +632,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -640,7 +640,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -700,7 +700,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -708,7 +708,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -769,7 +769,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -777,7 +777,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -837,7 +837,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -845,7 +845,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -905,7 +905,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -913,7 +913,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -973,7 +973,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -981,7 +981,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1042,7 +1042,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1101,7 +1101,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1160,7 +1160,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1220,7 +1220,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1280,7 +1280,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1288,7 +1288,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1349,7 +1349,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1357,7 +1357,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1427,7 +1427,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1435,7 +1435,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
@@ -1513,7 +1513,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const giverBankAccountData = {
-      amount: 2000,
+      initialAmount: 2000,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco',
@@ -1521,7 +1521,7 @@ describe('Rota de criação de uma transferência', () => {
     };
 
     const receiverBankAccountData = {
-      amount: 2500,
+      initialAmount: 2500,
       createdTimestamp: Date.now(),
       id: moment.generate(),
       name: 'Meu banco2',
