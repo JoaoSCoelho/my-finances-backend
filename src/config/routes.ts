@@ -62,6 +62,7 @@ router.get(
 router.post(
   '/api/bankaccounts',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeCreateBankAccountController()),
 );
 router.get(
@@ -72,11 +73,13 @@ router.get(
 router.put(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeUpdateMyBankAccountController()),
 );
 router.delete(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeDeleteUserBankAccountController()),
 );
 router.post(
