@@ -16,6 +16,7 @@ import { makeDeleteMyTransferController } from '../factories/delete-my-transfer-
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeGetMyExpensesController } from '../factories/get-my-expenses-controller';
 import { makeGetMyIncomesController } from '../factories/get-my-incomes-controller';
+import { makeGetMyTransactionsController } from '../factories/get-my-transactions-controller';
 import { makeGetMyTransfersController } from '../factories/get-my-transfers-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
@@ -34,7 +35,7 @@ router.post('/api/login', adaptRoute(makeLoginController()));
 router.post('/api/users', adaptRoute(makeCreateUserController()));
 router.post(
   '/api/auth/refreshtoken',
-  limiter({ max: 1, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
+  limiter({ max: 5, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
   adaptRoute(makeRefreshTokenController()),
 );
 
@@ -81,6 +82,11 @@ router.delete(
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeDeleteUserBankAccountController()),
+);
+router.get(
+  '/api/transactions',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeGetMyTransactionsController()),
 );
 router.post(
   '/api/transactions/expenses',
