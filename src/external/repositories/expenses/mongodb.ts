@@ -2,6 +2,7 @@ import { Expense } from '../../../entities/expense';
 import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
+  BulkDeleteMethod,
   DeleteMethod,
   DeletePropsMethod,
   ExpensesRepository,
@@ -67,8 +68,10 @@ export class MongoExpenses implements ExpensesRepository {
 
   delete: DeleteMethod = async (id) => {
     await ExpenseModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await ExpenseModel.deleteMany(filter);
   };
 
   deleteProps: DeletePropsMethod = async (id, propsNames) => {

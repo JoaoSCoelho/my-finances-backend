@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
+  BulkDeleteMethod,
   DeleteMethod,
   DeletePropsMethod,
   ExistsMethod,
@@ -84,8 +85,10 @@ export class MongoBankAccounts implements BankAccountsRepository {
 
   delete: DeleteMethod = async (id) => {
     await BankAccountModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await BankAccountModel.deleteMany(filter);
   };
 
   deleteProps: DeletePropsMethod = async (id, propsNames) => {

@@ -2,6 +2,7 @@ import { Income } from '../../../entities/income';
 import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
+  BulkDeleteMethod,
   DeleteMethod,
   DeletePropsMethod,
   FilterWithThisPropsMethod,
@@ -65,8 +66,10 @@ export class MongoIncomes implements IncomesRepository {
 
   delete: DeleteMethod = async (id) => {
     await IncomeModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await IncomeModel.deleteMany(filter);
   };
 
   deleteProps: DeletePropsMethod = async (id, propsNames) => {

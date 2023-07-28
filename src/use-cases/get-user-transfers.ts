@@ -14,10 +14,6 @@ export class GetUserTransfersUC {
     const bankAccountsObjects =
       await this.bankAccountsRepository.filterWithThisProps({ userId });
 
-    const bankAccountsIds = bankAccountsObjects.map(
-      (bankAccountObject) => bankAccountObject.id,
-    );
-
     const transfersObjects = (
       await Promise.all(
         bankAccountsObjects.map(async (bankAccountObject) => {
@@ -32,10 +28,10 @@ export class GetUserTransfersUC {
       .filter((transferObject, i, arr) => {
         return (
           // Remove as duplicações
-          arr.findIndex((to) => to.id === transferObject.id) === i &&
+          arr.findIndex((to) => to.id === transferObject.id) === i
           // Filtra apenas aqueles que tanto o receiver quanto o giver são bankAccounts do usuário
-          bankAccountsIds.includes(transferObject.giverBankAccountId) &&
-          bankAccountsIds.includes(transferObject.receiverBankAccountId)
+          // bankAccountsIds.includes(transferObject.giverBankAccountId) &&
+          // bankAccountsIds.includes(transferObject.receiverBankAccountId)
         );
       });
 

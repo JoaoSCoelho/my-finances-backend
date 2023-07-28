@@ -581,7 +581,7 @@ describe('Rota de criação de uma transferência', () => {
 
     const transferData = {
       amount: 52,
-      title: 'a'.repeat(51),
+      title: 'a'.repeat(101),
       giverBankAccountId: giverBankAccountData.id,
       receiverBankAccountId: receiverBankAccountData.id,
     };
@@ -614,8 +614,8 @@ describe('Rota de criação de uma transferência', () => {
       paramName: 'title',
       param: transferData.title,
       reason: 'greater than the maximum characters',
-      expected: 'Less or equal than 50 characters',
-      error: `The title "${transferData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 50 characters`,
+      expected: 'Less or equal than 100 characters',
+      error: `The title "${transferData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 100 characters`,
     });
 
     expect(status).toBe(400);

@@ -450,7 +450,7 @@ describe('Rota de criação de uma despesa', () => {
 
     const expenseData = {
       spent: 52,
-      title: 'a'.repeat(51),
+      title: 'a'.repeat(101),
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
     };
@@ -483,8 +483,8 @@ describe('Rota de criação de uma despesa', () => {
       paramName: 'title',
       param: expenseData.title,
       reason: 'greater than the maximum characters',
-      expected: 'Less or equal than 50 characters',
-      error: `The title "${expenseData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 50 characters`,
+      expected: 'Less or equal than 100 characters',
+      error: `The title "${expenseData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 100 characters`,
     });
 
     expect(status).toBe(400);

@@ -2,8 +2,11 @@ import { Transfer } from '../../../entities/transfer';
 import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
+  BulkDeleteMethod,
+  BulkDeleteWithThisPossibilitiesMethod,
   DeleteMethod,
   DeletePropsMethod,
+  FilterInThisIdsMethod,
   FilterWithThisPossibilitiesMethod,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
@@ -38,6 +41,20 @@ export class MongoTransfers implements TransfersRepository {
     filters,
   ) => {
     const dbTransfers = await TransferModel.find({ $or: filters });
+
+    return dbTransfers.map((dbTransfer) => {
+      const eitherTransfer = Transfer.create(dbTransfer);
+
+      if (eitherTransfer.isLeft()) throw new ServerError();
+
+      const transfer = eitherTransfer.value;
+
+      return transfer.value;
+    });
+  };
+
+  filterInThisIds: FilterInThisIdsMethod = async (ids) => {
+    const dbTransfers = await TransferModel.find({ id: { $in: ids } });
 
     return dbTransfers.map((dbTransfer) => {
       const eitherTransfer = Transfer.create(dbTransfer);
@@ -89,6 +106,15 @@ export class MongoTransfers implements TransfersRepository {
 
     return;
   };
+
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await TransferModel.deleteMany(filter);
+  };
+
+  bulkDeleteWithThisPossibilities: BulkDeleteWithThisPossibilitiesMethod =
+    async (filters) => {
+      await TransferModel.deleteMany({ $or: filters });
+    };
 
   deleteProps: DeletePropsMethod = async (id, propsNames) => {
     const dbTransfer = await TransferModel.findOneAndUpdate(
