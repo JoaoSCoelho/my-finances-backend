@@ -8,7 +8,7 @@ export class TransactionTitle {
 
   static type = 'string';
   static minimumLength = 3;
-  static maximumLength = 50;
+  static maximumLength = 100;
   static validCharacters = () =>
     /^[\dA-Za-záàâãäéèêëíïìîóôõöòúùûüçñÁÀÂÃÄÉÈÊËÍÏÌÎÓÔÕÖÒÚÙÛÜÇÑ !@#$%¨&*_()+=\-:/'",§<>.|`´^~ºª?°]+$/gi;
 

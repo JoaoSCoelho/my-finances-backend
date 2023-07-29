@@ -20,7 +20,10 @@ export class UpdateUserIncomeUC {
     userID: string,
     incomeID: string,
     data: Partial<
-      Pick<IIncomeObject, 'gain' | 'description' | 'title' | 'bankAccountId'>
+      Pick<
+        Record<keyof IIncomeObject, any>,
+        'gain' | 'description' | 'title' | 'bankAccountId'
+      >
     >,
   ): Promise<
     Either<
@@ -28,30 +31,9 @@ export class UpdateUserIncomeUC {
       Income
     >
   > {
-    const eitherIncomeObject = await this.incomesRepository.findWithThisProps({
-      id: incomeID,
-    });
-
-    if (eitherIncomeObject.isLeft())
-      return left(
-        new ThereIsNoEntityWithThisPropError('income', 'id', incomeID),
-      );
-
-    const incomeObject = eitherIncomeObject.value;
-
-    const existsBankAccount = await this.bankAccountsRepository.exists({
-      id: incomeObject.bankAccountId,
-      userId: userID,
-    });
-
-    if (!existsBankAccount)
-      return left(
-        new ThereIsNoEntityWithThisPropError('income', 'id', incomeID),
-      );
-
     const eitherGain = NoNegativeAmount.create(data.gain);
 
-    if ('gain' in data && eitherGain.isLeft())
+    if (data.gain !== undefined && eitherGain.isLeft())
       return left(
         new InvalidParamError(
           'gain',
@@ -63,7 +45,7 @@ export class UpdateUserIncomeUC {
 
     const eitherTitle = TransactionTitle.create(data.title);
 
-    if ('title' in data && eitherTitle.isLeft())
+    if (data.title !== undefined && eitherTitle.isLeft())
       return left(
         new InvalidParamError(
           'title',
@@ -75,7 +57,7 @@ export class UpdateUserIncomeUC {
 
     const eitherDescription = AnyString.create(data.description);
 
-    if ('description' in data && eitherDescription.isLeft())
+    if (data.description != undefined && eitherDescription.isLeft())
       return left(
         new InvalidParamError(
           'description',
@@ -87,7 +69,7 @@ export class UpdateUserIncomeUC {
 
     const eitherBankAccountId = ID.create(data.bankAccountId);
 
-    if ('bankAccountId' in data) {
+    if (data.bankAccountId !== undefined) {
       if (eitherBankAccountId.isLeft())
         return left(
           new InvalidParamError(
@@ -114,6 +96,27 @@ export class UpdateUserIncomeUC {
       }
     }
 
+    const eitherIncomeObject = await this.incomesRepository.findWithThisProps({
+      id: incomeID,
+    });
+
+    if (eitherIncomeObject.isLeft())
+      return left(
+        new ThereIsNoEntityWithThisPropError('income', 'id', incomeID),
+      );
+
+    const incomeObject = eitherIncomeObject.value;
+
+    const existsBankAccount = await this.bankAccountsRepository.exists({
+      id: incomeObject.bankAccountId,
+      userId: userID,
+    });
+
+    if (!existsBankAccount)
+      return left(
+        new ThereIsNoEntityWithThisPropError('income', 'id', incomeID),
+      );
+
     const eitherUpdatedIncomeObject = await this.incomesRepository.update(
       incomeID,
       data,
@@ -121,7 +124,19 @@ export class UpdateUserIncomeUC {
 
     if (eitherUpdatedIncomeObject.isLeft()) return left(new ServerError());
 
-    const updatedIncomeObject = eitherUpdatedIncomeObject.value;
+    let updatedIncomeObject = eitherUpdatedIncomeObject.value;
+
+    if (data.description === null) {
+      const eitherRemovedPropIncomeObject =
+        await this.incomesRepository.deleteProps(incomeID, ['description']);
+
+      if (eitherRemovedPropIncomeObject.isLeft())
+        return left(
+          new ThereIsNoEntityWithThisPropError('income', 'id', incomeID),
+        );
+
+      updatedIncomeObject = eitherRemovedPropIncomeObject.value;
+    }
 
     const eitherIncome = Income.create(updatedIncomeObject);
 

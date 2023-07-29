@@ -2,7 +2,9 @@ import { Expense } from '../../../entities/expense';
 import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
+  BulkDeleteMethod,
   DeleteMethod,
+  DeletePropsMethod,
   ExpensesRepository,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
@@ -66,7 +68,32 @@ export class MongoExpenses implements ExpensesRepository {
 
   delete: DeleteMethod = async (id) => {
     await ExpenseModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await ExpenseModel.deleteMany(filter);
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbExpense = await ExpenseModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: '' }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbExpense) return left(null);
+
+    const eitherExpense = Expense.create(dbExpense);
+
+    if (eitherExpense.isLeft()) throw new ServerError();
+
+    const expense = eitherExpense.value;
+
+    return right(expense.value);
   };
 }

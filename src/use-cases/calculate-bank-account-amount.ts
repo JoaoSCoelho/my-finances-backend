@@ -63,7 +63,7 @@ export class CalculateBankAccountAmountUC {
     );
 
     const bankAccountAmount =
-      bankAccountObject.amount +
+      bankAccountObject.initialAmount +
       incomesTotal +
       receivedTransfersTotal -
       expensesTotal -

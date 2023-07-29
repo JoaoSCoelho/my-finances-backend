@@ -1,4 +1,4 @@
-import config from '../../config.json';
+import { apiEnv } from '../config/env';
 import { User } from '../entities/user';
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { ThereIsAlreadyEntityWithThisPropError } from '../errors/there-is-already-entity-with-this-prop-error';
@@ -37,7 +37,7 @@ export class CreateUserUC {
     const { value: password } = eitherPassword.value;
     const hashPassword = this.encryptor.encrypt(
       password,
-      config.default_encryptor_salts,
+      apiEnv.DEFAULT_ENCRYPTOR_SALTS,
     );
 
     const eitherEmail = Email.create(data.email);

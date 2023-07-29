@@ -8,7 +8,7 @@ import { Either, left, right } from '../shared/either';
 
 export interface ICreateBankAccountDTO {
   name: string;
-  amount: number;
+  initialAmount: number;
   userId: string;
   imageURL?: string;
 }
@@ -29,7 +29,7 @@ export class CreateBankAccountUC {
       id: this.generatorIDProvider.generate(),
       userId: data.userId,
       name: data.name,
-      amount: data.amount,
+      initialAmount: data.initialAmount,
       imageURL: data.imageURL,
       createdTimestamp: Date.now(),
     });

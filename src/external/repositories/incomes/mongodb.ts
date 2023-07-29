@@ -2,7 +2,9 @@ import { Income } from '../../../entities/income';
 import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
+  BulkDeleteMethod,
   DeleteMethod,
+  DeletePropsMethod,
   FilterWithThisPropsMethod,
   FindWithThisPropsMethod,
   IncomesRepository,
@@ -64,7 +66,32 @@ export class MongoIncomes implements IncomesRepository {
 
   delete: DeleteMethod = async (id) => {
     await IncomeModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await IncomeModel.deleteMany(filter);
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbIncome = await IncomeModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: '' }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbIncome) return left(null);
+
+    const eitherIncome = Income.create(dbIncome);
+
+    if (eitherIncome.isLeft()) throw new ServerError();
+
+    const income = eitherIncome.value;
+
+    return right(income.value);
   };
 }

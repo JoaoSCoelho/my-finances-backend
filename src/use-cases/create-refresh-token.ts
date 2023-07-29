@@ -1,4 +1,3 @@
-import config from '../../config.json';
 import { apiEnv } from '../config/env';
 import { User } from '../entities/user';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
@@ -21,7 +20,7 @@ export class CreateRefreshTokenUC {
         type: 'refresh',
       },
       apiEnv.JWT_SECRET,
-      60 * 60 * config.refresh_token_expires_in,
+      60 * 60 * apiEnv.REFRESH_TOKEN_EXPIRES_IN,
     );
 
     const eitherUserObject = await this.usersRepository.pushItemToProp(

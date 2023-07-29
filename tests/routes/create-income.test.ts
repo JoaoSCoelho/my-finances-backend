@@ -8,22 +8,22 @@ import { app } from '../../src/config/app';
 import { apiEnv } from '../../src/config/env';
 import { Moment } from '../../src/external/generator-id-providers/moment';
 import { BankAccountModel } from '../../src/external/repositories/bank-accounts/model';
-import { ExpenseModel } from '../../src/external/repositories/expenses/model';
+import { IncomeModel } from '../../src/external/repositories/incomes/model';
 import { UserModel } from '../../src/external/repositories/users/model';
 
 const moment = new Moment();
 
-describe('Rota de criação de uma despesa', () => {
+describe('Rota de criação de uma receita', () => {
   beforeAll(async () => {
-    await ExpenseModel.deleteMany();
+    await IncomeModel.deleteMany();
   }, 15000);
 
   afterAll(async () => {
-    await ExpenseModel.deleteMany();
+    await IncomeModel.deleteMany();
     await mongoose.connection.close();
   }, 15000);
 
-  test('Deve criar uma nova despesa', async () => {
+  test('Deve criar uma nova receita', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -41,8 +41,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: 'Roupas na shopee',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -68,27 +68,27 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
-      expense: {
-        ...expenseData,
+      income: {
+        ...incomeData,
         id: expect.any(String),
         createdTimestamp: expect.any(Number),
       },
-      newBankAccountAmount: bankAccountData.initialAmount - expenseData.spent,
+      newBankAccountAmount: bankAccountData.initialAmount + incomeData.gain,
     });
 
     expect(status).toBe(201);
 
-    const dbExpense = await ExpenseModel.findOne({ id: body.expense.id });
+    const dbIncome = await IncomeModel.findOne({ id: body.income.id });
 
-    expect(dbExpense).toMatchObject(body.expense);
+    expect(dbIncome).toMatchObject(body.income);
   }, 15000);
 
-  test('Deve criar uma nova despesa sem descrição', async () => {
+  test('Deve criar uma nova receita sem descrição', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -106,8 +106,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52.25,
+    const incomeData = {
+      gain: 52.25,
       title: 'Roupas na shopee',
       bankAccountId: bankAccountData.id,
     };
@@ -132,27 +132,27 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
-      expense: {
-        ...expenseData,
+      income: {
+        ...incomeData,
         id: expect.any(String),
         createdTimestamp: expect.any(Number),
       },
-      newBankAccountAmount: bankAccountData.initialAmount - expenseData.spent,
+      newBankAccountAmount: bankAccountData.initialAmount + incomeData.gain,
     });
 
     expect(status).toBe(201);
 
-    const dbExpense = await ExpenseModel.findOne({ id: body.expense.id });
+    const dbIncome = await IncomeModel.findOne({ id: body.income.id });
 
-    expect(dbExpense).toMatchObject(body.expense);
+    expect(dbIncome).toMatchObject(body.income);
   }, 15000);
 
-  test('Deve criar uma nova despesa sem as propriedades extras passadas no body da requisição', async () => {});
+  test('Deve criar uma nova receita sem as propriedades extras passadas no body da requisição', async () => {});
 
   test('Deve retornar um erro por não ter o email confirmado', async () => {
     const userCredentials = {
@@ -172,8 +172,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52.25,
+    const incomeData = {
+      gain: 52.25,
       title: 'Roupas na shopee',
       bankAccountId: bankAccountData.id,
     };
@@ -196,9 +196,9 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 106,
@@ -228,8 +228,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
     };
@@ -252,9 +252,9 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 103,
@@ -266,7 +266,7 @@ describe('Rota de criação de uma despesa', () => {
     expect(status).toBe(400);
   });
 
-  test('Deve retornar um erro por não ter o spent', async () => {
+  test('Deve retornar um erro por não ter o gain', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -284,7 +284,7 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
+    const incomeData = {
       title: 'Roupas na shopee',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -308,15 +308,15 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 103,
       name: 'Missing param',
-      paramName: 'spent',
-      error: 'Missing param: spent',
+      paramName: 'gain',
+      error: 'Missing param: gain',
     });
 
     expect(status).toBe(400);
@@ -332,8 +332,8 @@ describe('Rota de criação de uma despesa', () => {
       confirmedEmail: true,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: 'Roupas na shopee',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
     };
@@ -356,9 +356,9 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 103,
@@ -388,8 +388,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: 'aa',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -413,18 +413,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'title',
-      param: expenseData.title,
+      param: incomeData.title,
       reason: 'less than the minimum characters',
       expected: 'More or equal than 3 characters',
-      error: `The title "${expenseData.title}" is invalid: less than the minimum characters. Expected: More or equal than 3 characters`,
+      error: `The title "${incomeData.title}" is invalid: less than the minimum characters. Expected: More or equal than 3 characters`,
     });
 
     expect(status).toBe(400);
@@ -448,8 +448,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: 'a'.repeat(101),
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -473,18 +473,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'title',
-      param: expenseData.title,
+      param: incomeData.title,
       reason: 'greater than the maximum characters',
       expected: 'Less or equal than 100 characters',
-      error: `The title "${expenseData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 100 characters`,
+      error: `The title "${incomeData.title}" is invalid: greater than the maximum characters. Expected: Less or equal than 100 characters`,
     });
 
     expect(status).toBe(400);
@@ -508,8 +508,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: false,
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -533,18 +533,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'title',
-      param: expenseData.title,
+      param: incomeData.title,
       reason: 'type not supported',
       expected: 'string',
-      error: `The title "${expenseData.title}" is invalid: type not supported. Expected: string`,
+      error: `The title "${incomeData.title}" is invalid: type not supported. Expected: string`,
     });
 
     expect(status).toBe(400);
@@ -568,8 +568,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 52,
+    const incomeData = {
+      gain: 52,
       title: 'título↪',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -593,25 +593,25 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'title',
-      param: expenseData.title,
+      param: incomeData.title,
       reason: 'invalid characters',
       expected:
         'It must only contain alphanumeric characters (some may be accented), spaces, underscores and some special characters',
-      error: `The title "${expenseData.title}" is invalid: invalid characters. Expected: It must only contain alphanumeric characters (some may be accented), spaces, underscores and some special characters`,
+      error: `The title "${incomeData.title}" is invalid: invalid characters. Expected: It must only contain alphanumeric characters (some may be accented), spaces, underscores and some special characters`,
     });
 
     expect(status).toBe(400);
   });
 
-  test('Deve retornar um erro pelo spent ser do tipo errado', async () => {
+  test('Deve retornar um erro pelo gain ser do tipo errado', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -629,8 +629,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: [45],
+    const incomeData = {
+      gain: [45],
       title: 'título',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -654,24 +654,24 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
-      paramName: 'spent',
-      param: expenseData.spent,
+      paramName: 'gain',
+      param: incomeData.gain,
       reason: 'type not supported',
       expected: 'number',
-      error: `The spent "${expenseData.spent}" is invalid: type not supported. Expected: number`,
+      error: `The gain "${incomeData.gain}" is invalid: type not supported. Expected: number`,
     });
 
     expect(status).toBe(400);
   });
 
-  test('Deve retornar um erro pelo spent ser negativo', async () => {
+  test('Deve retornar um erro pelo gain ser negativo', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -689,8 +689,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: -45,
+    const incomeData = {
+      gain: -45,
       title: 'título',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -714,24 +714,24 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
-      paramName: 'spent',
-      param: expenseData.spent,
+      paramName: 'gain',
+      param: incomeData.gain,
       reason: 'less than the minimum',
       expected: 'More or equal than 0',
-      error: `The spent "${expenseData.spent}" is invalid: less than the minimum. Expected: More or equal than 0`,
+      error: `The gain "${incomeData.gain}" is invalid: less than the minimum. Expected: More or equal than 0`,
     });
 
     expect(status).toBe(400);
   });
 
-  test('Deve retornar um erro pelo spent ser maior que o máximo', async () => {
+  test('Deve retornar um erro pelo gain ser maior que o máximo', async () => {
     const userCredentials = {
       username: 'Nome de usuario',
       id: moment.generate(),
@@ -749,8 +749,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 1000000000000,
+    const incomeData = {
+      gain: 1000000000000,
       title: 'título',
       description: 'Meias: 12\nCuecas: 30\nÓculos: 10',
       bankAccountId: bankAccountData.id,
@@ -774,18 +774,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
-      paramName: 'spent',
-      param: expenseData.spent,
+      paramName: 'gain',
+      param: incomeData.gain,
       reason: 'greater than the maximum',
       expected: 'Less or equal than 999999999999',
-      error: `The spent "${expenseData.spent}" is invalid: greater than the maximum. Expected: Less or equal than 999999999999`,
+      error: `The gain "${incomeData.gain}" is invalid: greater than the maximum. Expected: Less or equal than 999999999999`,
     });
 
     expect(status).toBe(400);
@@ -809,8 +809,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 450,
+    const incomeData = {
+      gain: 450,
       title: 'título',
       description: 45,
       bankAccountId: bankAccountData.id,
@@ -834,18 +834,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'description',
-      param: expenseData.description,
+      param: incomeData.description,
       reason: 'type not supported',
       expected: 'string',
-      error: `The description "${expenseData.description}" is invalid: type not supported. Expected: string`,
+      error: `The description "${incomeData.description}" is invalid: type not supported. Expected: string`,
     });
 
     expect(status).toBe(400);
@@ -869,8 +869,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 450,
+    const incomeData = {
+      gain: 450,
       title: 'título',
       description: 'Descrição detalhada',
       bankAccountId: { id: bankAccountData.id },
@@ -894,18 +894,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'bankAccountId',
-      param: expenseData.bankAccountId,
+      param: incomeData.bankAccountId,
       reason: 'type not supported',
       expected: 'string',
-      error: `The bankAccountId "${expenseData.bankAccountId}" is invalid: type not supported. Expected: string`,
+      error: `The bankAccountId "${incomeData.bankAccountId}" is invalid: type not supported. Expected: string`,
     });
 
     expect(status).toBe(400);
@@ -921,8 +921,8 @@ describe('Rota de criação de uma despesa', () => {
       confirmedEmail: true,
     };
 
-    const expenseData = {
-      spent: 450,
+    const incomeData = {
+      gain: 450,
       title: 'título',
       description: 'Descrição detalhada',
       bankAccountId: '4654',
@@ -946,18 +946,18 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 100,
       name: 'Invalid param',
       paramName: 'bankAccountId',
-      param: expenseData.bankAccountId,
+      param: incomeData.bankAccountId,
       reason: 'incorrect structure',
       expected: 'Size must be equal to 21 characters',
-      error: `The bankAccountId "${expenseData.bankAccountId}" is invalid: incorrect structure. Expected: Size must be equal to 21 characters`,
+      error: `The bankAccountId "${incomeData.bankAccountId}" is invalid: incorrect structure. Expected: Size must be equal to 21 characters`,
     });
 
     expect(status).toBe(400);
@@ -981,8 +981,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: userCredentials.id,
     };
 
-    const expenseData = {
-      spent: 450,
+    const incomeData = {
+      gain: 450,
       title: 'título',
       description: 'Descrição detalhada',
       bankAccountId: bankAccountData.id,
@@ -1006,17 +1006,17 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 104,
       name: 'There is no entity with this prop',
-      error: `There is no bankAccount document with this id: ${expenseData.bankAccountId}`,
+      error: `There is no bankAccount document with this id: ${incomeData.bankAccountId}`,
       entityName: 'bankAccount',
       propName: 'id',
-      prop: expenseData.bankAccountId,
+      prop: incomeData.bankAccountId,
     });
 
     expect(status).toBe(400);
@@ -1049,8 +1049,8 @@ describe('Rota de criação de uma despesa', () => {
       userId: otherUserCredentials.id,
     };
 
-    const expenseData = {
-      spent: 450,
+    const incomeData = {
+      gain: 450,
       title: 'título',
       description: 'Descrição detalhada',
       bankAccountId: bankAccountData.id,
@@ -1081,17 +1081,17 @@ describe('Rota de criação de uma despesa', () => {
     );
 
     const { body, status } = await supertest(app)
-      .post('/api/transactions/expenses')
+      .post('/api/transactions/incomes')
       .set({ Authorization: `Bearer ${accessToken}` })
-      .send(expenseData);
+      .send(incomeData);
 
     expect(body).toEqual({
       code: 104,
       name: 'There is no entity with this prop',
-      error: `There is no bankAccount document with this id: ${expenseData.bankAccountId}`,
+      error: `There is no bankAccount document with this id: ${incomeData.bankAccountId}`,
       entityName: 'bankAccount',
       propName: 'id',
-      prop: expenseData.bankAccountId,
+      prop: incomeData.bankAccountId,
     });
 
     expect(status).toBe(400);

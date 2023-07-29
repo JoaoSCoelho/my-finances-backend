@@ -7,5 +7,5 @@ import { limiter } from '../default-middlewares/default-rate-limit';
 export const middleware = (app: Express): void => {
   app.use(bodyParser);
   app.use(cors);
-  app.use(limiter({ max: 60 }));
+  app.use(limiter({ max: 600 }));
 };

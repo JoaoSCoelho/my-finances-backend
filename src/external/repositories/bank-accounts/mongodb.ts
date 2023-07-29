@@ -3,7 +3,9 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   BankAccountsRepository,
+  BulkDeleteMethod,
   DeleteMethod,
+  DeletePropsMethod,
   ExistsMethod,
   ExistsWithThisIDMethod,
   FilterEqualMethod,
@@ -83,8 +85,33 @@ export class MongoBankAccounts implements BankAccountsRepository {
 
   delete: DeleteMethod = async (id) => {
     await BankAccountModel.findOneAndDelete({ id: id });
+  };
 
-    return;
+  bulkDelete: BulkDeleteMethod = async (filter) => {
+    await BankAccountModel.deleteMany(filter);
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbBankAccount = await BankAccountModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: '' }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbBankAccount) return left(null);
+
+    const eitherBankAccount = BankAccount.create(dbBankAccount);
+
+    if (eitherBankAccount.isLeft()) throw new ServerError();
+
+    const bankAccount = eitherBankAccount.value;
+
+    return right(bankAccount.value);
   };
 
   existsWithThisID: ExistsWithThisIDMethod = async (bankAccountId) => {
