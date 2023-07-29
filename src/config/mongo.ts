@@ -5,9 +5,9 @@ import { apiEnv } from './env';
 export async function connect() {
   try {
     await mongoose.connect(
-      `${apiEnv.MONGO_URI}/${
-        process.env.NODE_ENV === 'test' ? 'test' : 'db'
-      }?retryWrites=true&w=majority`,
+      process.env.NODE_ENV === 'test'
+        ? apiEnv.MONGO_TEST_URI!
+        : apiEnv.MONGO_URI,
     );
 
     console.log('→ Connected to MongoDB');

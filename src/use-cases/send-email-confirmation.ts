@@ -1,6 +1,5 @@
 import { readFileSync } from 'fs';
 
-import config from '../../config.json';
 import { apiEnv } from '../config/env';
 import { transporter } from '../config/nodemailer';
 import { User } from '../entities/user';
@@ -21,7 +20,7 @@ export class SendEmailConfirmationUC {
     const confirmEmailToken = this.tokenManager.generate(
       { userID: user.id.value, type: 'confirm-email' },
       apiEnv.JWT_SECRET,
-      60 * 60 * config.confirm_email_token_expires_in,
+      60 * 60 * apiEnv.CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
     );
 
     const emailContent = emailTemplate

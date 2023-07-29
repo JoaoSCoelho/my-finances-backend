@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import supertest from 'supertest';
 
-import config from '../../config.json';
 import { app } from '../../src/config/app';
 import { apiEnv } from '../../src/config/env';
 import { IUserObject } from '../../src/entities/user';
@@ -48,7 +47,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [refreshToken],
     });
@@ -114,7 +113,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [refreshToken, otherRefreshToken],
     });
@@ -184,7 +183,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       createdTimestamp: Date.now(),
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       username: userCredentials.username,
       email: userCredentials.email,
@@ -242,7 +241,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [refreshToken.toString()],
     });
@@ -293,7 +292,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [refreshToken],
     });
@@ -380,7 +379,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [refreshToken],
     });
@@ -435,7 +434,7 @@ describe('Rota para renovar o token de acesso do usuário', () => {
       password: undefined,
       hashPassword: bcrypt.encrypt(
         userCredentials.password,
-        config.default_encryptor_salts,
+        apiEnv.DEFAULT_ENCRYPTOR_SALTS,
       ),
       refreshTokens: [],
     });
