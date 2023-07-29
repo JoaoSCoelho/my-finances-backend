@@ -1,9 +1,10 @@
-import { User } from '../entities/user';
+import { IUserObject, User } from '../entities/user';
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { ServerError } from '../errors/server-error';
+import { ThereIsAlreadyEntityWithThisPropError } from '../errors/there-is-already-entity-with-this-prop-error';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
 import { UsersRepository } from '../external/ports/users-repository';
-import { AnyObject } from '../object-values/any-object';
+import { Email } from '../object-values/email';
 import { URL } from '../object-values/url';
 import { Username } from '../object-values/username';
 import { Either, left, right } from '../shared/either';
@@ -13,37 +14,21 @@ export class UpdateUserUC {
 
   async execute(
     userID: string,
-    anyUpdateObject: any,
+    data: Partial<
+      Pick<
+        Record<keyof IUserObject, any>,
+        'email' | 'profileImageURL' | 'username'
+      >
+    >,
   ): Promise<
     Either<
-      InvalidParamError | ThereIsNoEntityWithThisPropError | ServerError,
+      | InvalidParamError
+      | ThereIsNoEntityWithThisPropError
+      | ThereIsAlreadyEntityWithThisPropError
+      | ServerError,
       User
     >
   > {
-    const eitherUpdateObject = AnyObject.create(anyUpdateObject);
-
-    if (eitherUpdateObject.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherUpdateObject;
-
-      return left(
-        new InvalidParamError(
-          'updateObject',
-          anyUpdateObject,
-          reason,
-          expected,
-        ),
-      );
-    }
-
-    const { value: updateObject } = eitherUpdateObject.value;
-
-    const data = {
-      username: updateObject.username,
-      profileImageURL: updateObject.profileImageURL,
-    };
-
     const eitherUsername = Username.create(data.username);
 
     if (data.username !== undefined && eitherUsername.isLeft())
@@ -51,7 +36,7 @@ export class UpdateUserUC {
 
     const eitherProfileImageURL = URL.create(data.profileImageURL);
 
-    if (data.profileImageURL !== undefined && eitherProfileImageURL.isLeft())
+    if (data.profileImageURL != undefined && eitherProfileImageURL.isLeft())
       return left(
         new InvalidParamError(
           'profileImageURL',
@@ -61,15 +46,50 @@ export class UpdateUserUC {
         ),
       );
 
-    const eitherUpdatedUserObject = await this.usersRepository.update(
-      userID,
-      data,
-    );
+    const eitherEmail = Email.create(data.email);
+
+    if (data.email !== undefined) {
+      if (eitherEmail.isLeft()) return left(eitherEmail.value);
+      else {
+        const loweredEmail = eitherEmail.value.value.toLowerCase();
+
+        data.email = data.email.toLowerCase();
+
+        const existsWithThisEmail =
+          await this.usersRepository.existsWithThisEmail(loweredEmail);
+
+        if (existsWithThisEmail)
+          return left(
+            new ThereIsAlreadyEntityWithThisPropError(
+              'user',
+              'email',
+              loweredEmail,
+            ),
+          );
+      }
+    }
+
+    const eitherUpdatedUserObject = await this.usersRepository.update(userID, {
+      ...data,
+      profileImageURL:
+        data.profileImageURL == undefined ? undefined : data.profileImageURL,
+      confirmedEmail: data.email ? false : true,
+    });
 
     if (eitherUpdatedUserObject.isLeft())
       return left(new ThereIsNoEntityWithThisPropError('user', 'id', userID));
 
-    const updatedUserObject = eitherUpdatedUserObject.value;
+    let updatedUserObject = eitherUpdatedUserObject.value;
+
+    if (data.profileImageURL === null) {
+      const eitherRemovedPropUserObject =
+        await this.usersRepository.deleteProps(userID, ['profileImageURL']);
+
+      if (eitherRemovedPropUserObject.isLeft())
+        return left(new ThereIsNoEntityWithThisPropError('user', 'id', userID));
+
+      updatedUserObject = eitherRemovedPropUserObject.value;
+    }
 
     const eitherUpdatedUser = User.create(updatedUserObject);
 

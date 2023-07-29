@@ -3,6 +3,7 @@ import { ServerError } from '../../../errors/server-error';
 import { left, right } from '../../../shared/either';
 import {
   DeleteMethod,
+  DeletePropsMethod,
   ExistsWithThisEmailMethod,
   ExistsWithThisIDMethod,
   FilterEqualMethod,
@@ -79,6 +80,29 @@ export class MongoUsers implements UsersRepository {
     await UserModel.findOneAndDelete({ id: userID });
 
     return;
+  };
+
+  deleteProps: DeletePropsMethod = async (id, propsNames) => {
+    const dbUser = await UserModel.findOneAndUpdate(
+      { id },
+      {
+        $unset: propsNames.reduce(
+          (prev, curr) => ({ ...prev, [curr]: '' }),
+          {},
+        ),
+      },
+      { new: true },
+    );
+
+    if (!dbUser) return left(null);
+
+    const eitherUser = User.create(dbUser);
+
+    if (eitherUser.isLeft()) throw new ServerError();
+
+    const user = eitherUser.value;
+
+    return right(user.value);
   };
 
   filterEqual: FilterEqualMethod = async (key, value) => {

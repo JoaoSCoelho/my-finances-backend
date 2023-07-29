@@ -1,4 +1,4 @@
-import { BankAccount } from '../entities/bank-account';
+import { BankAccount, IBankAccountObject } from '../entities/bank-account';
 import { InvalidParamError } from '../errors/invalid-param-error';
 import { ServerError } from '../errors/server-error';
 import { ThereIsNoEntityWithThisPropError } from '../errors/there-is-no-entity-with-this-prop-error';
@@ -7,7 +7,6 @@ import { Amount } from '../object-values/amout';
 import { BankAccountName } from '../object-values/bank-account-name';
 import { URL } from '../object-values/url';
 import { Either, left, right } from '../shared/either';
-import { ICreateBankAccountDTO } from './create-bank-account';
 
 export class UpdateUserBankAccountUC {
   constructor(private bankAccountsRepository: BankAccountsRepository) {}
@@ -15,36 +14,38 @@ export class UpdateUserBankAccountUC {
   async execute(
     id: string,
     userId: string,
-    data: Omit<Record<keyof ICreateBankAccountDTO, any>, 'userId'>,
+    data: Partial<
+      Pick<
+        Record<keyof IBankAccountObject, any>,
+        'initialAmount' | 'imageURL' | 'name'
+      >
+    >,
   ): Promise<
     Either<
       InvalidParamError | ServerError | ThereIsNoEntityWithThisPropError,
       BankAccount
     >
   > {
-    const eitherName = data.name
-      ? BankAccountName.create(data.name)
-      : undefined;
+    const eitherName = BankAccountName.create(data.name);
 
-    if (eitherName?.isLeft()) return left(eitherName.value);
+    if (data.name !== undefined && eitherName.isLeft())
+      return left(eitherName.value);
 
-    const name = eitherName?.value as BankAccountName | undefined;
+    const eitherInitialAmount = Amount.create(data.initialAmount);
 
-    const eitherAmount = data.name ? Amount.create(data.amount) : undefined;
+    if (data.initialAmount !== undefined && eitherInitialAmount.isLeft())
+      return left(
+        new InvalidParamError(
+          'initialAmount',
+          data.initialAmount,
+          eitherInitialAmount.value.reason,
+          eitherInitialAmount.value.expected,
+        ),
+      );
 
-    if (eitherAmount?.isLeft()) return left(eitherAmount.value);
+    const eitherImageURL = URL.create(data.imageURL);
 
-    const amount = eitherAmount?.value as Amount | undefined;
-
-    const eitherImageURL = (
-      data.imageURL === undefined
-        ? undefined
-        : data.imageURL === ''
-        ? right({ value: '' })
-        : URL.create(data.imageURL)
-    ) as Either<InvalidParamError, URL> | undefined;
-
-    if (eitherImageURL?.isLeft())
+    if (data.imageURL != undefined && eitherImageURL.isLeft())
       return left(
         new InvalidParamError(
           'imageURL',
@@ -53,8 +54,6 @@ export class UpdateUserBankAccountUC {
           eitherImageURL.value.expected,
         ),
       );
-
-    const imageURL = eitherImageURL?.value as URL | undefined;
 
     const findedBankAccounts =
       await this.bankAccountsRepository.filterWithThisProps({
@@ -71,9 +70,9 @@ export class UpdateUserBankAccountUC {
 
     const eitherUpdatedBankAccountObject =
       await this.bankAccountsRepository.update(id, {
-        name: name?.value,
-        imageURL: imageURL?.value,
-        amount: amount?.value,
+        name: data.name,
+        imageURL: data.imageURL == undefined ? undefined : data.imageURL,
+        initialAmount: data.initialAmount,
       });
 
     if (eitherUpdatedBankAccountObject.isLeft())
@@ -81,7 +80,19 @@ export class UpdateUserBankAccountUC {
         new ThereIsNoEntityWithThisPropError('bankAccount', 'id', id),
       );
 
-    const updatedBankAccountObject = eitherUpdatedBankAccountObject.value;
+    let updatedBankAccountObject = eitherUpdatedBankAccountObject.value;
+
+    if (data.imageURL === null) {
+      const eitherRemovedPropBankAccountObject =
+        await this.bankAccountsRepository.deleteProps(id, ['imageURL']);
+
+      if (eitherRemovedPropBankAccountObject.isLeft())
+        return left(
+          new ThereIsNoEntityWithThisPropError('bankAccount', 'id', id),
+        );
+
+      updatedBankAccountObject = eitherRemovedPropBankAccountObject.value;
+    }
 
     const eitherBankAccount = BankAccount.create(updatedBankAccountObject);
 

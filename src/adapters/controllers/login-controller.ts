@@ -1,6 +1,4 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
 import { CreateAccessTokenUC } from '../../use-cases/create-access-token';
 import { CreateRefreshTokenUC } from '../../use-cases/create-refresh-token';
 import { LoginUC } from '../../use-cases/login';
@@ -20,21 +18,10 @@ export class LoginController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
-    const eitherUser = await this.loginUC.execute(body.email, body.password);
+    const eitherUser = await this.loginUC.execute(
+      httpRequest.body.email,
+      httpRequest.body.password,
+    );
 
     if (eitherUser.isLeft()) {
       if (eitherUser.value.name === 'Server error')

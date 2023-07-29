@@ -22,6 +22,16 @@ export type UpdateMethod = <
   updateObject: Partial<Record<K, V>>,
 ) => Promise<Either<null, IIncomeObject>>;
 export type DeleteMethod = (id: string) => Promise<void>;
+export type DeletePropsMethod = <K extends keyof IIncomeObject>(
+  id: string,
+  propsNames: K[],
+) => Promise<Either<null, IIncomeObject>>;
+export type BulkDeleteMethod = <
+  K extends keyof IIncomeObject,
+  V extends IIncomeObject[K],
+>(
+  filter: Partial<Record<K, V>>,
+) => Promise<void>;
 
 export type IncomesRepository = {
   set: SetMethod;
@@ -29,4 +39,6 @@ export type IncomesRepository = {
   findWithThisProps: FindWithThisPropsMethod;
   update: UpdateMethod;
   delete: DeleteMethod;
+  bulkDelete: BulkDeleteMethod;
+  deleteProps: DeletePropsMethod;
 };

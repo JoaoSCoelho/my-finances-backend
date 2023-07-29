@@ -1,7 +1,5 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { MissingParamError } from '../../errors/missing-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
 import { CreateAccessTokenUC } from '../../use-cases/create-access-token';
 import { CreateRefreshTokenUC } from '../../use-cases/create-refresh-token';
 import { ValidateRefreshTokenUC } from '../../use-cases/validate-refresh-token';
@@ -16,21 +14,7 @@ export class RefreshTokenController implements Adapter {
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
-    if (!('refreshToken' in body))
+    if (!('refreshToken' in httpRequest.body))
       return badRequest(new MissingParamError('refreshToken'));
 
     const eitherValidateRT = await this.validateRefreshTokenUC.execute(

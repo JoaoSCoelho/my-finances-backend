@@ -5,7 +5,8 @@ export const limiter = (options: Partial<Options>) =>
     max: 20,
     windowMs: 60 * 1000, // 1 minute
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    message: 'Too many requests, please try again later.',
+    message: { message: 'Too many requests, please try again later.' },
     legacyHeaders: true, // Enable the `X-RateLimit-*` headers
+    skip: () => process.env.NODE_ENV === 'test',
     ...options,
   });

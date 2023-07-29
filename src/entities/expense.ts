@@ -1,9 +1,8 @@
 import { InvalidParamError } from '../errors/invalid-param-error';
-import { Amount } from '../object-values/amout';
 import { AnyNumber } from '../object-values/any-number';
-import { AnyString } from '../object-values/any-string';
 import { ID } from '../object-values/id';
 import { NoNegativeAmount } from '../object-values/no-negative-amount';
+import { TransactionDescription } from '../object-values/transaction-description';
 import { TransactionTitle } from '../object-values/transaction-title';
 import { Either, left, right } from '../shared/either';
 
@@ -23,7 +22,7 @@ export class Expense {
     public readonly title: TransactionTitle,
     public readonly spent: NoNegativeAmount,
     public readonly createdTimestamp: AnyNumber,
-    public readonly description?: AnyString,
+    public readonly description?: TransactionDescription,
   ) {
     Object.freeze(this);
   }
@@ -45,16 +44,24 @@ export class Expense {
     const eitherId = ID.create(expense.id);
     const eitherBankAccountId = ID.create(expense.bankAccountId);
     const eitherDescription = expense.description
-      ? AnyString.create(expense.description)
+      ? TransactionDescription.create(expense.description)
       : undefined;
-    const eitherSpent = Amount.create(expense.spent);
+    const eitherSpent = NoNegativeAmount.create(expense.spent);
     const eitherCreatedTimestamp = AnyNumber.create(expense.createdTimestamp);
     const eitherTitle = TransactionTitle.create(expense.title);
 
     // Checks if there were any errors during the creation of object values
 
     if (eitherId.isLeft()) return left(eitherId.value);
-    if (eitherTitle.isLeft()) return left(eitherTitle.value);
+    if (eitherTitle.isLeft())
+      return left(
+        new InvalidParamError(
+          'title',
+          expense.title,
+          eitherTitle.value.reason,
+          eitherTitle.value.expected,
+        ),
+      );
     if (eitherBankAccountId.isLeft())
       return left(
         new InvalidParamError(

@@ -1,47 +1,35 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
-import { AnyObject } from '../../object-values/any-object';
+import { ServerError } from '../../errors/server-error';
 import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserBankAccountUC } from '../../use-cases/update-user-bank-account';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
 import { Adapter, AdapterHandleMethod } from '../ports/adapter';
 
-export class UpdateUserBankAccountController implements Adapter {
+export class UpdateMyBankAccountController implements Adapter {
   constructor(
     private updateUserBankAccountUC: UpdateUserBankAccountUC,
     private calculateBankAccountAmountUC: CalculateBankAccountAmountUC,
   ) {}
 
   handle: AdapterHandleMethod = async (httpRequest) => {
-    const eitherBody = AnyObject.create(httpRequest.body);
-
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
-
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
-
     const eitherId = ID.create(httpRequest.params.id);
 
     if (eitherId.isLeft()) return badRequest(eitherId.value);
 
     const { value: id } = eitherId.value;
 
-    const userID: string = httpRequest.nextData!.auth.userID;
+    const payload = httpRequest.nextData?.auth;
+
+    if (!payload || !('userID' in payload))
+      return serverError(new ServerError());
 
     const eitherBankAccount = await this.updateUserBankAccountUC.execute(
       id,
-      userID,
+      payload.userID,
       {
-        amount: body.amount,
-        imageURL: body.imageURL,
-        name: body.name,
+        initialAmount: httpRequest.body.initialAmount,
+        imageURL: httpRequest.body.imageURL,
+        name: httpRequest.body.name,
       },
     );
 

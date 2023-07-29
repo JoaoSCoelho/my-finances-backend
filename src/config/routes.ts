@@ -16,6 +16,7 @@ import { makeDeleteMyTransferController } from '../factories/delete-my-transfer-
 import { makeDeleteUserBankAccountController } from '../factories/delete-user-bank-account-controller';
 import { makeGetMyExpensesController } from '../factories/get-my-expenses-controller';
 import { makeGetMyIncomesController } from '../factories/get-my-incomes-controller';
+import { makeGetMyTransactionsController } from '../factories/get-my-transactions-controller';
 import { makeGetMyTransfersController } from '../factories/get-my-transfers-controller';
 import { makeLoginController } from '../factories/login-controller';
 import { makeMeController } from '../factories/me-controller';
@@ -23,16 +24,20 @@ import { makeMyBankAccountsController } from '../factories/my-bank-accounts-cont
 import { makeRefreshTokenController } from '../factories/refresh-token-controller';
 import { makeResendEmailConfirmation } from '../factories/resend-email-confirmation-controller';
 import { makeUpdateMeController } from '../factories/update-me-controller';
+import { makeUpdateMyBankAccountController } from '../factories/update-my-bank-account-controller';
 import { makeUpdateMyExpenseController } from '../factories/update-my-expense-controller';
 import { makeUpdateMyIncomeController } from '../factories/update-my-income-controller';
 import { makeUpdateMyTransferController } from '../factories/update-my-transfer-controller';
-import { makeUpdateUserBankAccountController } from '../factories/update-user-bank-account-controller';
 
 const router = Router();
 
 router.post('/api/login', adaptRoute(makeLoginController()));
 router.post('/api/users', adaptRoute(makeCreateUserController()));
-router.post('/api/auth/refreshtoken', adaptRoute(makeRefreshTokenController()));
+router.post(
+  '/api/auth/refreshtoken',
+  limiter({ max: 5, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
+  adaptRoute(makeRefreshTokenController()),
+);
 
 router.get(
   '/api/users/me',
@@ -41,7 +46,7 @@ router.get(
 );
 router.post(
   '/api/users/me/resend/emailconfirmation',
-  limiter({ max: 1, windowMs: 1000 * 60 * 15 }),
+  limiter({ max: 1, windowMs: 1000 * 60 * 15, skipFailedRequests: true }),
   adaptRoute(makeAuthMiddleware()),
   adaptRoute(makeResendEmailConfirmation()),
 );
@@ -58,6 +63,7 @@ router.get(
 router.post(
   '/api/bankaccounts',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeCreateBankAccountController()),
 );
 router.get(
@@ -68,12 +74,19 @@ router.get(
 router.put(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
-  adaptRoute(makeUpdateUserBankAccountController()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
+  adaptRoute(makeUpdateMyBankAccountController()),
 );
 router.delete(
   '/api/bankaccounts/:id',
   adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeConfirmedEmailMiddleware()),
   adaptRoute(makeDeleteUserBankAccountController()),
+);
+router.get(
+  '/api/transactions',
+  adaptRoute(makeAuthMiddleware()),
+  adaptRoute(makeGetMyTransactionsController()),
 );
 router.post(
   '/api/transactions/expenses',

@@ -20,7 +20,10 @@ export class UpdateUserExpenseUC {
     userID: string,
     expenseID: string,
     data: Partial<
-      Pick<IExpenseObject, 'spent' | 'description' | 'title' | 'bankAccountId'>
+      Pick<
+        Record<keyof IExpenseObject, any>,
+        'spent' | 'description' | 'title' | 'bankAccountId'
+      >
     >,
   ): Promise<
     Either<
@@ -28,30 +31,9 @@ export class UpdateUserExpenseUC {
       Expense
     >
   > {
-    const eitherExpenseObject = await this.expensesRepository.findWithThisProps(
-      { id: expenseID },
-    );
-
-    if (eitherExpenseObject.isLeft())
-      return left(
-        new ThereIsNoEntityWithThisPropError('expense', 'id', expenseID),
-      );
-
-    const expenseObject = eitherExpenseObject.value;
-
-    const existsBankAccount = await this.bankAccountsRepository.exists({
-      id: expenseObject.bankAccountId,
-      userId: userID,
-    });
-
-    if (!existsBankAccount)
-      return left(
-        new ThereIsNoEntityWithThisPropError('expense', 'id', expenseID),
-      );
-
     const eitherSpent = NoNegativeAmount.create(data.spent);
 
-    if ('spent' in data && eitherSpent.isLeft())
+    if (data.spent !== undefined && eitherSpent.isLeft())
       return left(
         new InvalidParamError(
           'spent',
@@ -63,7 +45,7 @@ export class UpdateUserExpenseUC {
 
     const eitherTitle = TransactionTitle.create(data.title);
 
-    if ('title' in data && eitherTitle.isLeft())
+    if (data.title !== undefined && eitherTitle.isLeft())
       return left(
         new InvalidParamError(
           'title',
@@ -75,7 +57,7 @@ export class UpdateUserExpenseUC {
 
     const eitherDescription = AnyString.create(data.description);
 
-    if ('description' in data && eitherDescription.isLeft())
+    if (data.description != undefined && eitherDescription.isLeft())
       return left(
         new InvalidParamError(
           'description',
@@ -87,7 +69,7 @@ export class UpdateUserExpenseUC {
 
     const eitherBankAccountId = ID.create(data.bankAccountId);
 
-    if ('bankAccountId' in data) {
+    if (data.bankAccountId !== undefined) {
       if (eitherBankAccountId.isLeft())
         return left(
           new InvalidParamError(
@@ -114,6 +96,27 @@ export class UpdateUserExpenseUC {
       }
     }
 
+    const eitherExpenseObject = await this.expensesRepository.findWithThisProps(
+      { id: expenseID },
+    );
+
+    if (eitherExpenseObject.isLeft())
+      return left(
+        new ThereIsNoEntityWithThisPropError('expense', 'id', expenseID),
+      );
+
+    const expenseObject = eitherExpenseObject.value;
+
+    const existsBankAccount = await this.bankAccountsRepository.exists({
+      id: expenseObject.bankAccountId,
+      userId: userID,
+    });
+
+    if (!existsBankAccount)
+      return left(
+        new ThereIsNoEntityWithThisPropError('expense', 'id', expenseID),
+      );
+
     const eitherUpdatedExpenseObject = await this.expensesRepository.update(
       expenseID,
       data,
@@ -121,7 +124,19 @@ export class UpdateUserExpenseUC {
 
     if (eitherUpdatedExpenseObject.isLeft()) return left(new ServerError());
 
-    const updatedExpenseObject = eitherUpdatedExpenseObject.value;
+    let updatedExpenseObject = eitherUpdatedExpenseObject.value;
+
+    if (data.description === null) {
+      const eitherRemovedPropExpenseObject =
+        await this.expensesRepository.deleteProps(expenseID, ['description']);
+
+      if (eitherRemovedPropExpenseObject.isLeft())
+        return left(
+          new ThereIsNoEntityWithThisPropError('expense', 'id', expenseID),
+        );
+
+      updatedExpenseObject = eitherRemovedPropExpenseObject.value;
+    }
 
     const eitherExpense = Expense.create(updatedExpenseObject);
 

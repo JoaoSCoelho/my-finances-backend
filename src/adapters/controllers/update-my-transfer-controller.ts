@@ -1,6 +1,5 @@
-import { InvalidParamError } from '../../errors/invalid-param-error';
 import { ServerError } from '../../errors/server-error';
-import { AnyObject } from '../../object-values/any-object';
+import { ID } from '../../object-values/id';
 import { CalculateBankAccountAmountUC } from '../../use-cases/calculate-bank-account-amount';
 import { UpdateUserTransferUC } from '../../use-cases/update-user-transfer';
 import { badRequest, ok, serverError } from '../helpers/http-helper';
@@ -17,37 +16,22 @@ export class UpdateMyTransferController implements Adapter {
 
     if (!('userID' in payload)) return serverError(new ServerError());
 
-    const eitherBody = AnyObject.create(httpRequest.body);
+    const eitherId = ID.create(httpRequest.params.id);
 
-    if (eitherBody.isLeft()) {
-      const {
-        value: { reason, expected },
-      } = eitherBody;
+    if (eitherId.isLeft()) return badRequest(eitherId.value);
 
-      return badRequest(
-        new InvalidParamError('body', httpRequest.body, reason, expected),
-      );
-    }
-
-    const { value: body } = eitherBody.value;
+    const { value: id } = eitherId.value;
 
     const eitherUpdateTransfer = await this.updateUserTransferUC.execute(
       payload.userID,
-      httpRequest.params.id,
-      body.description
-        ? {
-            description: body.description,
-            title: body.title,
-            amount: body.amount,
-            giverBankAccountId: body.giverBankAccountId,
-            receiverBankAccountId: body.receiverBankAccountId,
-          }
-        : {
-            title: body.title,
-            amount: body.amount,
-            giverBankAccountId: body.giverBankAccountId,
-            receiverBankAccountId: body.receiverBankAccountId,
-          },
+      id,
+      {
+        description: httpRequest.body.description,
+        title: httpRequest.body.title,
+        amount: httpRequest.body.amount,
+        giverBankAccountId: httpRequest.body.giverBankAccountId,
+        receiverBankAccountId: httpRequest.body.receiverBankAccountId,
+      },
     );
 
     if (eitherUpdateTransfer.isLeft()) {
