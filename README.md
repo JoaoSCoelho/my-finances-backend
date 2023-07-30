@@ -14,6 +14,7 @@ Tabela de conteúdos
 - [Tabela de conteúdos](#tabela-de-conteúdos)
   - [Instalação](#instalação)
   - [Como rodar](#como-rodar)
+  - [Rotas](#rotas)
   - [Status](#status)
     - [Features](#features)
   - [Licença](#licença)
@@ -61,9 +62,12 @@ $ npm run test:functional
 
 Agora você já pode acessar: `http://localhost:{ENV.PORT}`
 
-Você pode usar algum programa para testar as [requisições](docs/rotas.md), como por exemplo o [Insômnia](https://insomnia.rest/download).
+Você pode usar algum programa para testar as [requisições](#rotas), como por exemplo o [Insômnia](https://insomnia.rest/download).
 
 [Insômnia collection](resources/Insomnia_2023-07-29.json) - Coleção de requisições da API no Insômnia
+
+## Rotas
+Você pode ver a documentação das rotas da API [aqui](docs/rotas.md)
 
 ## Status
 > **🚧 Em construção... 🚧 v1.1.0**
